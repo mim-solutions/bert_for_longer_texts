@@ -8,4 +8,6 @@ pip install numpy \
             pandas \
             matplotlib \
             jupyter \
+            scikit-learn \
             tqdm \
+            transformers \
