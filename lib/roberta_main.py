@@ -14,7 +14,7 @@ from lib.base_model import Model
 from lib.custom_datasets import TokenizedDataset
 
 from lib.text_preprocessors import RobertaTokenizer
-from lib.config import ROBERTA_PATH
+from config import ROBERTA_PATH
 
 ## Model default params
 
