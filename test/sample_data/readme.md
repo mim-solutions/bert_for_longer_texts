@@ -1,0 +1,1 @@
+Próbka danych z datasetu [PolEmo 2.0 Sentiment Analysis Dataset](https://clarin-pl.eu/dspace/handle/11321/710)
