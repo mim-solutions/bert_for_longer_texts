@@ -7,23 +7,15 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from lib.config import VISIBLE_GPUS
-
-
-import os
-os.environ["CUDA_VISIBLE_DEVICES"]= VISIBLE_GPUS
-import torch
-
-
 from lib.base_model import create_test_dataloader
 from lib.roberta_main import load_tokenizer
 from lib.input_transforms import tokenize
 from lib.text_preprocessors import RobertaTokenizer
 from lib.custom_datasets import TokenizedDataset
 
-class TestModel(unittest.TestCase):
+class TestUnits(unittest.TestCase):
     """
-    Basic test case for model
+    Tests for single functions and objects
     """
     
     def test_tokenize_function(self):
@@ -73,13 +65,6 @@ class TestModel(unittest.TestCase):
         result_list = loaded_sample[0].numpy().tolist()
 
         self.assertEqual(result_list,expected_result)
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
