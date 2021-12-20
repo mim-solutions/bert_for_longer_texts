@@ -4,16 +4,22 @@ Test for models
 
 import unittest
 
+import torch
 import pandas as pd
 import numpy as np
 
 from lib.base_model import create_test_dataloader
 from lib.roberta_main import load_tokenizer
-from lib.input_transforms import tokenize
-from lib.text_preprocessors import RobertaTokenizer
+from lib.text_preprocessors import tokenize, tokenize_pooled, RobertaTokenizer
 from lib.custom_datasets import TokenizedDataset
 
-class TestUnits(unittest.TestCase):
+from lib.roberta_pooling import (tokenize_all_text, split_overlapping, split_tokens_into_smaller_chunks,
+ add_special_tokens_at_beginning_and_end, add_padding_tokens, reshape_tokens_for_model_input,
+ transform_text_to_model_input)
+
+SAMPLE_LONGER_TEXT_PATH = 'test/sample_data/sample.txt'
+
+class TestBaseModelUnits(unittest.TestCase):
     """
     Tests for single functions and objects
     """
@@ -27,7 +33,7 @@ class TestUnits(unittest.TestCase):
         texts = [text]
 
         tokenized = tokenize(texts,tokenizer)
-        result_list = tokenized['input_ids'][0].numpy().tolist()
+        result_list = tokenized[0][0].tolist()
 
         self.assertEqual(result_list,expected_result)
 
@@ -65,6 +71,97 @@ class TestUnits(unittest.TestCase):
         result_list = loaded_sample[0].numpy().tolist()
 
         self.assertEqual(result_list,expected_result)
+
+class TestPoolingUnits(unittest.TestCase):
+    """
+    Tests for single functions and objects
+    """
+    
+    def test_pooling_functions(self):
+        tokenizer = load_tokenizer()
+        # Load example text
+        with open(SAMPLE_LONGER_TEXT_PATH, 'r') as file:
+            longer_text = file.read()
+        # Test tokenizing the entire texts
+        tokens = tokenize_all_text(longer_text,tokenizer)
+        number_of_tokens =  len(tokens['input_ids'][0].numpy())
+        expected_result = 3194
+
+        self.assertEqual(number_of_tokens,expected_result)
+        # Test splitting tokens into overlapping chunks
+        size = 510
+        step = 256
+        minimal_length = 256
+
+        input_id_chunks, mask_chunks = split_tokens_into_smaller_chunks(tokens,size,step,minimal_length)
+        number_of_chunks = len(input_id_chunks)
+        expected_result = 12
+
+        self.assertEqual(number_of_chunks,expected_result)
+        # Test adding special tokens at the beginning and end
+        add_special_tokens_at_beginning_and_end(input_id_chunks, mask_chunks)
+        first_token_id = input_id_chunks[0][0].item()
+        expected_result = 101
+
+        self.assertEqual(first_token_id,expected_result)
+
+        last_token_id = input_id_chunks[0][-1].item()
+        expected_result = 102
+
+        self.assertEqual(last_token_id,expected_result)
+        # Test adding padding tokens to make sure all chunks have exactly 512 tokens
+        add_padding_tokens(input_id_chunks, mask_chunks)
+        last_chunk = input_id_chunks[-1]
+        result = len(last_chunk)
+        expected_result = 512
+
+        self.assertEqual(result,expected_result)
+
+        last_token_id = last_chunk[-1]
+        expected_result = 0
+
+        self.assertEqual(last_token_id,expected_result)
+
+        # Test reshaping tokens for model input
+        input_dict = reshape_tokens_for_model_input(input_id_chunks, mask_chunks)
+        result = list(input_dict['input_ids'].shape)
+        expected_result = [12,512]
+
+        self.assertEqual(result,expected_result)
+
+        # Integrated test for combined method transform_text_to_model_input
+        input_dict = transform_text_to_model_input(longer_text,tokenizer,size,step,minimal_length)
+
+        result = list(input_dict['input_ids'].shape)
+        expected_result = [12,512]
+
+        self.assertEqual(result,expected_result)
+
+    def test_tokenize_pooled(self):
+        tokenizer = load_tokenizer()
+        # Load example text
+        with open(SAMPLE_LONGER_TEXT_PATH, 'r') as file:
+            longer_text = file.read()
+
+        size = 510
+        step = 256
+        minimal_length = 256
+
+        texts = [longer_text, longer_text]
+
+        result = tokenize_pooled(texts, tokenizer, size, step, minimal_length)
+        # Test if the result has an expected shape
+        self.assertEqual(len(result),len(texts))
+        self.assertEqual(list(result[0][0].shape),[12,512])
+
+
+    def test_split_overlapping(self):
+        example_list = [1,2,3,4,5]
+        splitted = split_overlapping(example_list,3,2,1)
+
+        expected_result = [[1,2,3],[3,4,5],[5]]
+        
+        self.assertEqual(splitted,expected_result)
 
 if __name__ == '__main__':
     unittest.main()

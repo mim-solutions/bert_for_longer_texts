@@ -24,3 +24,10 @@ class TokenizedDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.input_ids[idx],self.attention_mask[idx],self.labels[idx]
+
+def collate_fn_pooled_tokens(data):
+    input_ids = [data[i][0] for i in range(len(data))]
+    attention_mask = [data[i][1] for i in range(len(data))]
+    labels = [data[i][2] for i in range(len(data))]
+    collated = [input_ids, attention_mask, labels]
+    return collated
