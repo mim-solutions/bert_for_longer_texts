@@ -11,13 +11,13 @@ Cele projektu:
 Biblioteka wymaga instalacji torcha w wersji kompatybilnej z maszyną i CUDA. Następnie instalujemy pozostałe paczki za pomocą ```bash env_setup.sh```. Bardziej szczegółowy opis znajduje się w [Setup środowiska dla nowego projektu](docs/setup_env.md).
 
 ## Ściągnięcie modelu
-W pierwszej kolejności ściągamy model RoBERTa wytrenowany na korpusie języka polskiego. Jest to plik ```roberta_base_transformers.zip``` na  [stronie](https://github.com/sdadas/polish-roberta/releases). Po ściągnięciu, rozpakowujemy pliki. Ścieżkę do katalogu kopiujemy do pliku z konfiguracją ```config.py``` np. ```ROBERTA_PATH = "../resources/roberta"```
+W pierwszej kolejności ściągamy model RoBERTa wytrenowany na korpusie języka polskiego. Jest to plik ```roberta_base_transformers.zip``` na  [stronie](https://github.com/sdadas/polish-roberta/releases). Po ściągnięciu, rozpakowujemy pliki. Ścieżkę do katalogu kopiujemy do pliku z konfiguracją ```config.py``` np. ```ROBERTA_PATH = "../resources/roberta"```.
 
 ## Konfiguracja
 W pliku ```config.py``` podajemy ścieżkę do ściągniętego modelu oraz podać GPU, na którym chcemy puszczać model. Można wybrać kilka GPU np. ```VISIBLE_GPUS = "0,2,3"```.
 
 ## Testy
-Żeby upewnić się, że wszystko działa, puszczamy testy poleceniami ```python test/test_units.py``` oraz ```python test/test_model.py```.
+Żeby upewnić się, że wszystko działa, puszczamy testy poleceniem ```python3 -m pytest test```.
 
 ## Przykład użycia
 

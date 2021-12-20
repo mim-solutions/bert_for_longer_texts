@@ -1,0 +1,141 @@
+Uczenie maszynowe, samouczenie się maszyn albo systemy uczące się (ang. machine learning) – obszar sztucznej inteligencji poświęcony algorytmom, które poprawiają się automatycznie poprzez doświadczenie[1], czyli ekspozycję na dane. Algorytmy uczenia maszynowego budują model matematyczny na podstawie przykładowych danych, zwanych zbiorem uczącym, w celu prognozowania lub podejmowania decyzji bez bycia zaprogramowanym explicite przez człowieka do tego celu. Algorytmy uczenia maszynowego są wykorzystywane w wielu różnych zastosowaniach, takich jak ochrona przed spamem (filtrowanie wiadomości internetowych pod kątem niechcianej korespondencji), czy rozpoznawanie obrazów, w których opracowanie konwencjonalnych algorytmów do wykonywania potrzebnych zadań jest trudne lub niewykonalne.
+
+Uczenie maszynowe jest konsekwencją rozwoju idei sztucznej inteligencji i metod jej wdrażania praktycznego. Dotyczy rozwoju oprogramowania stosowanego zwłaszcza w innowacyjnych technologiach i przemyśle. Odpowiednie algorytmy mają pozwolić oprogramowaniu na zautomatyzowanie procesu pozyskiwania i analizy danych do ulepszania i rozwoju własnego systemu.
+
+Uczenie się może być rozpatrywane jako konkretyzacja algorytmu czyli dobór parametrów, nazywanych wiedzą lub umiejętnością. Służy do tego wiele typów metod pozyskiwania wiedzy oraz sposobów reprezentowania wiedzy.
+
+Ma to zapewnić zwiększanie:
+
+efektywności
+
+wydajności
+
+bezawaryjności
+
+redukcji kosztów.
+
+Początki uczenia maszynowego [ edytuj | edytuj kod ]
+
+Pierwszym przykładem maszynowego uczenia się może być projekt Arthura Samuela z firmy IBM, który w latach 1952-1962 rozwijał program do szkolenia zawodników szachowych.
+
+Przełomem w dziedzinie sztucznej inteligencji i maszynowego uczenia się było powstanie systemu eksperckiego Dendral na Uniwersytecie Stanforda w 1965. System ten powstał w celu zautomatyzowania analizy i identyfikacji molekuł związków organicznych, które dotychczas nie były znane chemikom. Wyniki badań otrzymane dzięki systemowi Dendral były pierwszym w historii odkryciem dokonanym przez komputer, które zostały opublikowane w prasie specjalistycznej.
+
+W 1977 powstaje program AM (Automated Mathematician) napisany w języku programowania Lisp, którego autorem był Doug Lenat. Służył do zautomatyzowanego poszukiwania nowych praw matematycznych korzystając z algorytmów heurystycznych. Następcą AM został, również stworzony przez Lenata, program Eurisko.
+
+Badania nad uczeniem maszynowym nabierają tempa od początku lat 90., kiedy Gerald Tesauro stworzył program TD-Gammon, potrafiący konkurować w grze Backgammon z mistrzami świata. Aby dojść do takiej perfekcji program ten uczył się swojej strategii grając jako przeciwnik w ponad milionie gier. Algorytm zaimplementowany w programie znalazł później zastosowanie w neuronauce.
+
+W 1997 Garri Kasparow, mistrz świata w szachach, został pokonany w tzw. miniaturze (partia trwała jedynie 19 posunięć) przez komputer Deep Blue w ostatniej z sześciu rozgrywek, w której został znacznie unowocześniony przez firmę IBM. Kasparow zarzucił firmie IBM oszustwo, kiedy odmówiła mu dostępu do historii wcześniejszych gier Deep Blue. W ten sposób Kasparow nie był w stanie analizować strategii przeciwnika, podczas gdy twórcy Deep Blue niezwykle dokładnie analizowali i opracowywali wszystkie wcześniejsze rozgrywki Kasparowa tworząc odpowiednie algorytmy programu. Pozostało mu jedynie studiowanie sposobów gry ogólnodostępnych programów szachowych. Rosyjski szachista domagał się rewanżu, ale firma IBM nie zgodziła się i Deep Blue przeszedł na „emeryturę”. Krytycy wielokrotnie zarzucali firmie IBM, że zamiast sprawiedliwej rywalizacji szachowej mieli na celu wypromowanie swych rozwiązań technologicznych i marki.
+
+Koniec lat 90. obfituje w powszechne zastosowanie algorytmów uczenia maszynowego w rozwoju sieci internet i działania wyszukiwarek internetowych (Google, Yahoo, Bing).
+
+W 2006 ogólnodostępny program szachowy Fritz 10 pokonał mistrza świata Władimira Kramnika.
+
+W 2011 roku superkomputer Watson, stworzony przez IBM, wygrał w teleturnieju Jeopardy!, pokonując dwóch najlepszych graczy w historii[2][3].
+
+Współczesne definicje uczenia się [ edytuj | edytuj kod ]
+
+Uczenie się w kontekście sztucznej inteligencji oraz automatyki rozumiane jest inaczej niż tradycyjnie. Proces uczenia się systemu ma za zadanie osiągnięcie rezultatów opartych na wiedzy fragmentarycznej, umożliwiać doskonalenie się, tworzyć nowe pojęcia oraz wnioskować indukcyjnie.
+
+Herbert Simon (1983) "Uczenie się oznacza zmiany w systemie, które mają charakter adaptacyjny w tym sensie, że pozwalają systemowi wykonać za następnym razem takie samo zadanie lub zadania podobne bardziej efektywnie."
+
+Ryszard Michalski (1986) "Uczenie się to konstruowanie i zmiana reprezentacji doświadczanych faktów. W ocenie konstruowania reprezentacji bierze się pod uwagę: wiarygodność – określa stopień w jakim reprezentacja odpowiada rzeczywistości, efektywność – charakteryzuje przydatność reprezentacji do osiągania danego celu, poziom abstrakcji – odpowiada zakresowi szczegółowości i precyzji pojęć używanych w reprezentacji; określa on tzw. moc opisową reprezentacji. Reprezentacja jest rozumiana jako np. opisy symboliczne, algorytmy, modele symulacyjne, plany, obrazy."
+
+Donald Michie (1991) "System uczący się wykorzystuje zewnętrzne dane empiryczne w celu tworzenia i aktualizacji podstaw dla udoskonalonego działania na podobnych danych w przyszłości oraz wyrażania tych podstaw w zrozumiałej i symbolicznej postaci".
+
+Cele teoretyczne i ogólne zastosowanie uczenia maszynowego [ edytuj | edytuj kod ]
+
+Uczenie maszynowe w teorii ma prowadzić do określonych celów m.in.:
+
+tworzenia nowych pojęć,
+
+wykrywania nieznanych prawidłowości w danych,
+
+formułowania reguł decyzyjnych,
+
+przyswajania nowych pojęć i struktur przy pomocy uogólnienia i analogii,
+
+modyfikowania, uogólniania i precyzowania danych,
+
+zdobywania wiedzy poprzez interakcję z otoczeniem,
+
+formułowania wiedzy zrozumiałej dla człowieka.
+
+Ogólne zastosowanie maszynowego uczenia się to m.in.:
+
+analiza i użytkowanie olbrzymich baz danych , w przypadku których rozmiary, złożoność oraz wymóg ciągłej aktualizacji uniemożliwiają niezautomatyzowaną analizę (np. w takich dziedzinach jak ekonomia, medycyna, chemia)
+
+, w przypadku których rozmiary, złożoność oraz wymóg ciągłej aktualizacji uniemożliwiają niezautomatyzowaną analizę (np. w takich dziedzinach jak ekonomia, medycyna, chemia) dostosowywanie się systemu do środowiska poprzez dynamiczną modyfikację, pozwalającą na poprawne działanie w zmiennych warunkach (robotyka, systemy sterowania, produkcji, analizy danych)
+
+poprzez dynamiczną modyfikację, pozwalającą na poprawne działanie w zmiennych warunkach (robotyka, systemy sterowania, produkcji, analizy danych) poszukiwanie i analiza zależności w dużych bazach danych w celu syntetycznego przedstawiania informacji według podanych kryteriów (systemy eksperckie, wyszukiwarki internetowe)
+
+w celu syntetycznego przedstawiania informacji według podanych kryteriów (systemy eksperckie, wyszukiwarki internetowe) analiza, badanie i opracowywanie bardzo złożonych problemów, trudnych do opisu i często nie posiadających wystarczających modeli teoretycznych, których uzyskanie jest kosztowne, czasochłonne lub mało wiarygodne (fizyka, matematyka)
+
+Zastosowania praktyczne [ edytuj | edytuj kod ]
+
+Uczenie maszynowe wciąż się rozwija i znajduje nowe praktyczne zastosowania. Ilość możliwych zastosowań jest niezwykle ogromna i pozwala przewidzieć, że w przyszłości każdy aspekt techniki będzie zawierać jakąś implementację algorytmów maszynowego uczenia się.
+
+Są to na przykład:
+
+oprogramowanie do rozpoznawania mowy: automatyczne tłumaczenie rozpoznawanie mowy ludzkiej dyktowanie komputerowi interfejsy użytkownika sterowane głosem automatyzacja głosem czynności domowych interaktywne biura obsługi rozwój robotów
+
+automatyczna nawigacja i sterowanie: kierowanie pojazdem (ALVINN) odnajdywanie drogi w nieznanym środowisku kierowanie statkiem kosmicznym (NASA Remote Agent) automatyzacja systemów produkcji i wydobycia (przemysł, górnictwo)
+
+analiza i klasyfikacja danych: systematyka obiektów astronomicznych (NASA Sky Survey) rozpoznawanie chorób na podstawie symptomów modelowanie i rozwijanie terapii lekowych rozpoznawania pisma na podstawie przykładów klasyfikowanie danych do grup tematycznych według kryteriów aproksymacja nieznanej funkcji na podstawie próbek ustalanie zależności funkcyjnych w danych przewidywanie trendów na rynkach finansowych na podstawie danych mikro- i makroekonomicznych wykrywanie prania pieniędzy [4] wykrywanie i liczenie kolonii bakteryjnych na szalce Petriego [5]
+
+
+
+Metody uczenia się i typy reprezentacji wiedzy [ edytuj | edytuj kod ]
+
+Uczenie maszynowe i jego powodzenie zależy od wyboru odpowiedniej metody formułującej problem, zbioru uczącego (czyli doświadczeń) oraz sposobu uczenia się nowych pojęć.
+
+Metody maszynowego uczenia się [ edytuj | edytuj kod ]
+
+wnioskowanie wartości funkcji logicznej z przykładów
+
+uczenie drzew decyzyjnych (ang. Decision Tree Learning ) – drzewo decyzyjne to graficzna metoda wspomagania procesu decyzyjnego, stosowana w teorii decyzji. Algorytm drzew decyzyjnych jest również stosowany w uczeniu maszynowym do pozyskiwania wiedzy na podstawie przykładów. Jest to schemat o strukturze drzewa decyzji i ich możliwych konsekwencji. Zadaniem drzew decyzyjnych może być zarówno stworzenie planu, jak i rozwiązanie problemu decyzyjnego. Metoda drzew decyzyjnych jest szczególnie przydatna w problemach decyzyjnych z licznymi, rozgałęziającymi się wariantami
+
+(ang. ) – drzewo decyzyjne to graficzna metoda wspomagania procesu decyzyjnego, stosowana w teorii decyzji. Algorytm drzew decyzyjnych jest również stosowany w uczeniu maszynowym do pozyskiwania wiedzy na podstawie przykładów. Jest to schemat o strukturze drzewa decyzji i ich możliwych konsekwencji. Zadaniem drzew decyzyjnych może być zarówno stworzenie planu, jak i rozwiązanie problemu decyzyjnego. Metoda drzew decyzyjnych jest szczególnie przydatna w problemach decyzyjnych z licznymi, rozgałęziającymi się wariantami uczenie Bayesowskie (ang. Bayesian Learning ) – metody oparte na twierdzeniu sformułowanym przez XVIII-wiecznego matematyka Thomasa Bayesa odgrywają znaczną i ostatnio rosnącą rolę w dziedzinie sztucznej inteligencji, zwłaszcza w uczeniu się maszyn. Można ogólnie powiedzieć, że wzór Bayesa stał się podstawą do rozwoju teorii i algorytmów różnych form wnioskowania probabilistycznego.
+
+(ang. ) – metody oparte na twierdzeniu sformułowanym przez XVIII-wiecznego matematyka Thomasa Bayesa odgrywają znaczną i ostatnio rosnącą rolę w dziedzinie sztucznej inteligencji, zwłaszcza w uczeniu się maszyn. Można ogólnie powiedzieć, że wzór Bayesa stał się podstawą do rozwoju teorii i algorytmów różnych form wnioskowania probabilistycznego. uczenie z przykładów (ang. Instance-based Learning ) – w odróżnieniu od metod uczenia, które konstruują ogólny, tzw. jawny opis funkcji docelowej, kiedy dostarczane są dane uczące, uczenie tego typu po prostu zapamiętuje przykłady. Uogólnianie nad tymi przykładami jest odwlekane do czasu, aż nowy przykład (zadanie) ma być klasyfikowane. Za każdym razem, kiedy przychodzi nowe zapytanie (przykład), badane są jego powiązania z zapamiętanymi przykładami aby ustalić wartość docelowej funkcji nowego przykładu.
+
+(ang. ) – w odróżnieniu od metod uczenia, które konstruują ogólny, tzw. jawny opis funkcji docelowej, kiedy dostarczane są dane uczące, uczenie tego typu po prostu zapamiętuje przykłady. Uogólnianie nad tymi przykładami jest odwlekane do czasu, aż nowy przykład (zadanie) ma być klasyfikowane. Za każdym razem, kiedy przychodzi nowe zapytanie (przykład), badane są jego powiązania z zapamiętanymi przykładami aby ustalić wartość docelowej funkcji nowego przykładu. uczenie się zbioru reguł (ang. Learning Sets of Rules ) – zbiór reguł w postaci klauzul Hornowskich może być interpretowany jako program w np. języku Prolog
+
+(ang. ) – zbiór reguł w postaci klauzul Hornowskich może być interpretowany jako program w np. języku Prolog analityczne uczenie (ang. Analytical Learning ) – metody uczenia indukcyjnego (wykorzystują sieci neuronowe, drzewa decyzyjne), wymagają pewnej liczby przykładów aby osiągnąć pewien poziom uogólnienia. Analityczne uczenie stosuje wiedzę aprioryczną i wnioskowanie dedukcyjne do powiększania informacji dostarczanej przez przykłady uczące.
+
+(ang. ) – metody uczenia indukcyjnego (wykorzystują sieci neuronowe, drzewa decyzyjne), wymagają pewnej liczby przykładów aby osiągnąć pewien poziom uogólnienia. Analityczne uczenie stosuje wiedzę aprioryczną i wnioskowanie dedukcyjne do powiększania informacji dostarczanej przez przykłady uczące. połączenie indukcyjnego i analitycznego uczenia (ang. Combining Inductive and Analytical Learning ) – czyste indukcyjne uczenie formułuje ogólne hipotezy poprzez znalezienie empirycznych regularności w przykładach uczących. Natomiast czyste analityczne uczenie stosuje aprioryczną wiedzę do otrzymania ogólnych hipotez dedukcyjnie. Połączenie obu podejść daje korzyści: lepszą poprawność i trafność uogólniania gdy dostępna jest wiedza aprioryczna oraz szukanie zależności w obserwowanych danych uczących do wypracowania szybkiej wiedzy apriorycznej.
+
+(ang. ) – czyste indukcyjne uczenie formułuje ogólne hipotezy poprzez znalezienie empirycznych regularności w przykładach uczących. Natomiast czyste analityczne uczenie stosuje aprioryczną wiedzę do otrzymania ogólnych hipotez dedukcyjnie. Połączenie obu podejść daje korzyści: lepszą poprawność i trafność uogólniania gdy dostępna jest wiedza aprioryczna oraz szukanie zależności w obserwowanych danych uczących do wypracowania szybkiej wiedzy apriorycznej. uczenie przez wzmacnianie (ang. Reinforcement Learning) – uczenie przez wzmacnianie to metoda wyznaczania optymalnej polityki sterowania przez agenta w nieznanym mu środowisku, na podstawie interakcji z tym środowiskiem. Jedyną informacją, na której agent się opiera jest sygnał wzmocnienia (poprzez wzorowanie się na pojęciu wzmocnienia z nauk behawioralnych w psychologii), który osiąga wysoką wartość (nagrodę), gdy agent podejmuje poprawne decyzje lub niską (karę) gdy podejmuje decyzje błędnie[6].
+
+Typy reprezentacji wiedzy [ edytuj | edytuj kod ]
+
+Wiedza wygenerowana wyżej wymienionymi metodami może mieć postać m.in.:
+
+Ograniczenia i problemy [ edytuj | edytuj kod ]
+
+Pomimo szybkiego rozwoju w dziedzinie uczenia maszynowego, systemy nadal pozostają w jakimś stopniu zależne od człowieka. Sam proces projektowania systemu wymaga od człowieka określenia sposobów zdobywania wiedzy oraz jej reprezentacji.
+
+Poza etapem tworzenia systemu powstają następujące problemy:
+
+zbyt mała lub zbyt duża zależność systemu od środowiska , w którym się znajduje co może prowadzić do niepełnej analizy danych lub błędnej interpretacji,
+
+, w którym się znajduje co może prowadzić do niepełnej analizy danych lub błędnej interpretacji, wiarygodność i poprawność generowanych wniosków , według Poppera „wiedza zdobyta w wyniku obserwacji ma charakter jedynie domyślny”, a rozumowanie indukcyjne nie może być w pełni udowodnione, a jedynie sfalsyfikowane,
+
+, według Poppera „wiedza zdobyta w wyniku obserwacji ma charakter jedynie domyślny”, a rozumowanie indukcyjne nie może być w pełni udowodnione, a jedynie sfalsyfikowane, niekompletne lub częściowo sprzeczne dane ,
+
+, niezdefiniowanie ograniczeń dziedzinowych, może prowadzić do zbyt daleko idących uogólnień i błędnych wniosków.
+
+W związku z powyższymi problemami przyjęto[potrzebny przypis] następujące postulaty, które wiedza generowana przez systemy powinna spełniać:
+
+wiedza generowana przez system powinna podlegać kontroli i ocenie człowieka , według podanych przez niego kryteriów,
+
+, według podanych przez niego kryteriów, system powinien być zdolny do udzielenia wyjaśnienia w przypadku problemu,
+
+w przypadku problemu, wiedza powinna być zrozumiała dla człowieka, czyli wyrażalna w opisie i modelu myślowym przez niego przyjętym.
+
+Paweł P. Cichosz Paweł P. , Systemy uczące się , Warszawa: WNT, 2000, ISBN 83-204-2544-1 , OCLC 749595834 .
+
+Mitchell T., Machine learning , McGraw-Hill Companies, Inc., 1997
+
+, McGraw-Hill Companies, Inc., 1997 Bolc L., Zaremba P., Wprowadzenie do uczenia się maszyn , Akademicka Oficyna Wydawnicza, 1993
+
+, Akademicka Oficyna Wydawnicza, 1993 Richard S. Sutton, Andrew G. Barto: Reinforcement Learning. The MIT Press, 1998. ISBN 0-262-19398-1 . ( ang. )
