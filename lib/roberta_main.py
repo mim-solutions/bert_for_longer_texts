@@ -28,7 +28,7 @@ DefaultParamsRobertaWithPooling = {
     'device' : 'cuda:0',
     'batch_size' : 6,
     'learning_rate' : 5e-6,
-    'pooling_strategy': 'max',
+    'pooling_strategy': 'mean',
     'size': 510,
     'step': 256,
     'minimal_length': 1
