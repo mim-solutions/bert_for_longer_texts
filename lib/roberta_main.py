@@ -28,7 +28,7 @@ DefaultParamsRobertaWithPooling = {
     'device' : 'cuda:0',
     'batch_size' : 6,
     'learning_rate' : 5e-6,
-    'pooling_strategy': 'max',
+    'pooling_strategy': 'mean',
     'size': 510,
     'step': 256,
     'minimal_length': 1
@@ -46,6 +46,19 @@ class RobertaClassificationModel(Model):
         self.nn = initialize_model(roberta,self.params['device'])
         self.optimizer = AdamW(self.nn.parameters(),
                   lr = self.params['learning_rate'])          # learning rate
+    def evaluate_single_batch(self,batch,model,device):
+        # push the batch to gpu
+        batch = [t.to(device) for t in batch]
+
+        model_input = batch[:-1]
+
+        labels = batch[-1]
+
+        # model predictions
+        preds = model(*model_input)
+        preds = torch.flatten(preds).cpu()
+        labels = labels.float().cpu()
+        return preds, labels
 
 class RobertaClassificationModelWithPooling(Model):
     def __init__(self, params = DefaultParamsRobertaWithPooling):

@@ -7,16 +7,21 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
 class Model():
+    '''
+    Abstract class for models
+    '''
     def __init__(self):
         self.params = None
         self.preprocessor = None
         self.dataset_class = None
         self.collate_fn = None
+    def evaluate_single_batch(self,batch,model,device):
+        raise NotImplementedError("This is implemented for subclasses only")
     def create_dataset(self,X_preprocessed,y):
         dataset = self.dataset_class(X_preprocessed,y)
         return dataset
     def fit(self, X_train, y_train, epochs = 3):
-        train_samples = len(X_train)
+        number_of_train_samples = len(X_train)
         # Text preprocessing
         X_train_preprocessed = self.preprocessor.preprocess(X_train)
         # Creating train dataset
@@ -24,7 +29,34 @@ class Model():
         # Creating train dataloader
         train_dataloader = create_train_dataloader(train_dataset,self.params['batch_size'],self.collate_fn)
         # Training
-        self.train_for_epochs(train_samples,train_dataloader,epochs)
+        self.train_for_epochs(number_of_train_samples,train_dataloader,epochs)
+    def train_and_evaluate(self, X_train, X_test, y_train, y_test, epochs = 3):
+        number_of_train_samples = len(X_train)
+        number_of_test_samples = len(X_test)
+        # Text preprocessing
+        X_train_preprocessed = self.preprocessor.preprocess(X_train)
+        X_test_preprocessed = self.preprocessor.preprocess(X_test)
+        # Creating datasets
+        train_dataset = self.create_dataset(X_train_preprocessed,y_train)
+        test_dataset =  self.create_dataset(X_test_preprocessed,y_test)
+        # Creating dataloaders
+        train_dataloader = create_train_dataloader(train_dataset,self.params['batch_size'],self.collate_fn)
+        test_dataloader = create_test_dataloader(test_dataset,self.params['batch_size'],self.collate_fn)
+        # Training and evaluating
+        result = self.train_and_evaluate_preprocessed(number_of_train_samples,train_dataloader,number_of_test_samples, test_dataloader, epochs)
+        return result
+    def train_and_evaluate_preprocessed(self,number_of_train_samples,train_dataloader,number_of_test_samples, test_dataloader, epochs):
+        result = {'train_acc':[],'train_loss':[],'test_acc':[],'test_loss':[]}
+        for epoch in range(epochs):
+            avg_loss, accuracy = self.train_single_epoch(number_of_train_samples,train_dataloader)
+            print(f'Epoch: {epoch}, Train accuracy: {accuracy}, Train loss: {avg_loss}')
+            result['train_acc'].append(accuracy)
+            result['train_loss'].append(avg_loss)
+            avg_loss, accuracy, _, _ = self.evaluate_single_epoch(number_of_test_samples,test_dataloader)
+            print(f'Epoch: {epoch}, Test accuracy: {accuracy}, Test loss: {avg_loss}')
+            result['test_acc'].append(accuracy)
+            result['test_loss'].append(avg_loss)
+        return result
     def predict(self, X_test):
         test_samples = len(X_test)
         y_test = [0] * len(X_test) # dummy labels
@@ -37,21 +69,7 @@ class Model():
         # Prediction
         _, _, preds, _ = self.evaluate_single_epoch(test_samples,test_dataloader)
         return preds
-    def evaluate_single_batch(self,batch,model,device):
-        # push the batch to gpu
-        batch = [t.to(device) for t in batch]
-
-        model_input = batch[:-1]
-
-        labels = batch[-1]
-
-        # model predictions
-        preds = model(*model_input)
-        preds = torch.flatten(preds).cpu()
-        labels = labels.float().cpu()
-        return preds, labels
-
-    def train_single_epoch(self,train_samples,train_dataloader):
+    def train_single_epoch(self,number_of_train_samples,train_dataloader):
         model = self.nn
         model.train()
         
@@ -67,6 +85,7 @@ class Model():
             preds, labels = self.evaluate_single_batch(batch,model,self.params['device'])
 
             # compute the loss between actual and predicted values
+
             loss,total_accurate,total_loss = calc_loss_and_accuracy(preds,labels,total_loss,total_accurate)
 
             # backward pass to calculate the gradients
@@ -79,13 +98,13 @@ class Model():
             self.optimizer.step()
 
         # compute the train loss of the epoch
-        avg_loss = total_loss / train_samples
-        accuracy = total_accurate/ train_samples
+        avg_loss = total_loss / number_of_train_samples
+        accuracy = total_accurate/ number_of_train_samples
         return avg_loss, accuracy
     
-    def train_for_epochs(self, train_samples, train_dataloader, epochs = 3):
+    def train_for_epochs(self, number_of_train_samples, train_dataloader, epochs = 3):
         for epoch in range(epochs):
-            avg_loss, accuracy = self.train_single_epoch(train_samples,train_dataloader)
+            avg_loss, accuracy = self.train_single_epoch(number_of_train_samples,train_dataloader)
             print(f'Epoch: {epoch}, Train accuracy: {accuracy}, Train loss: {avg_loss}')
             
     def evaluate_single_epoch(self, test_samples, test_dataloader):

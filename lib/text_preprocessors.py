@@ -17,8 +17,8 @@ class RobertaTokenizer(Preprocessor):
     def __init__(self,tokenizer):
         self.tokenizer = tokenizer
     def preprocess(self,array_of_texts):
-        array_of_preprocessed_data = tokenize(array_of_texts,self.tokenizer)
-        return array_of_preprocessed_data
+        tokens = tokenize(array_of_texts,self.tokenizer)
+        return tokens
 
 class RobertaTokenizerPooled(Preprocessor):
     def __init__(self,tokenizer,size,step,minimal_length):
@@ -42,17 +42,14 @@ def tokenize(texts, tokenizer):
     '''
     texts = list(texts)
     tokenizer.pad_token = "<pad>"
-    tokenized = tokenizer.batch_encode_plus(
+    tokens = tokenizer.batch_encode_plus(
         texts,
         max_length = 512,
         padding =True,
         truncation=True,
         return_tensors = 'pt')
-    input_ids = tokenized['input_ids'].numpy()
-    attention_mask = tokenized['attention_mask'].numpy()
-    array_of_preprocessed_data = np.array(list(zip(input_ids,attention_mask)))
 
-    return array_of_preprocessed_data
+    return tokens
 
 def tokenize_pooled(texts, tokenizer,size,step,minimal_length):
     '''
@@ -70,7 +67,7 @@ def tokenize_pooled(texts, tokenizer,size,step,minimal_length):
     array_of_preprocessed_data - array of the length len(texts)
     '''
     model_inputs = [transform_text_to_model_input(text,tokenizer,size,step,minimal_length) for text in texts]
-    input_ids = [model_input['input_ids'].numpy() for model_input in model_inputs]
-    attention_mask = [model_input['attention_mask'].numpy() for model_input in model_inputs]
-    array_of_preprocessed_data = np.array(list(zip(input_ids,attention_mask)))
-    return array_of_preprocessed_data
+    input_ids = [model_input[0] for model_input in model_inputs]
+    attention_mask = [model_input[1] for model_input in model_inputs]
+    tokens = {'input_ids':input_ids,'attention_mask':attention_mask}
+    return tokens

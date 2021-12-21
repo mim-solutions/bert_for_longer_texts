@@ -15,8 +15,8 @@ class TextDataset(Dataset):
 class TokenizedDataset(Dataset):
     ''' Dataset for tokens with labels'''
     def __init__(self,tokens,labels):
-        self.input_ids = tokens[:,0]
-        self.attention_mask = tokens[:,1]
+        self.input_ids = tokens['input_ids']
+        self.attention_mask = tokens['attention_mask']
         self.labels = labels
 
     def __len__(self):
