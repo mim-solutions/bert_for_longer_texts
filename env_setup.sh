@@ -10,5 +10,6 @@ pip install jupyter \
             pandas \
             pytest \
             scikit-learn \
+            tabulate \
             tqdm \
             transformers \
