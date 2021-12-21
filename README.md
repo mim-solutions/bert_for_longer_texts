@@ -1,14 +1,13 @@
 # Roberta For Longer Texts
 
-## Opis
+## Opis i motywacja
 
 Cele projektu:
 
-1. Stworzenie wygodnego, prostego interfejsu modelu RoBERTa dla klasyfikacji binarnej pozwalającego na natychmiastowe użycie bez konieczności zaznajamiania się np. z biblioteką `transformers` ([dokładniejszy opis](docs/roberta_interface.md))
-2. Rozszerzenie modelu dla tekstów dłuższych niż 512 tokenów za pomocą max/mean poolingu ([dokładniejszy opis](docs/roberta_for_longer_texts.md))
+1. Stworzenie wygodnego, prostego interfejsu modelu RoBERTa dla klasyfikacji binarnej pozwalającego na natychmiastowe użycie bez konieczności zaznajamiania się np. z biblioteką `transformers`
+2. Rozszerzenie modelu dla tekstów dłuższych niż 512 tokenów za pomocą max/mean poolingu
 
-## Motywacja
-### Interfejs
+### 1. Minimalny interfejs
 Istniejące instrukcje na temat transfer learningu modeli typu BERT wymagają zgłębiania szczegółów dotyczących architektury modelu, tokenizacji, konkretnych bibliotek, etc.. Rzecz jasna, taka wiedza jest wartościowa, jednak z punktu widzenia użytkownika, przydatne jest posiadanie prostego narzędzia z minimalnym interfejsem do trenowania modelu i predykcji podając minimalne dane tj. surowe teksty oraz ich oznaczenia. Dzięki temu można dużo szybciej w pierwszej kolejności zbudować prototyp i zobaczyć, jakie daje wyniki.
 
 Przykładowe alternatywne rozwiązania:
@@ -18,8 +17,8 @@ Przykładowe alternatywne rozwiązania:
 Zalety przygotowanego rozwiązania:
 - inputem są minimalne surowe dane, tj. listy tekstów i oznaczeń. Wszelkie przekształcenia, tokenizacje, przygotowanie datasetów i dataloaderów dzieją się automatycznie pod spodem
 - minimalny interfejs - klasa modelu wyposażona w metody `fit` oraz `predict`.
-### Rozszerzenie na dłuższe teksty
-Domyślnie modele typu BERT mogą przetwarzać tekst o maksymalnej długości 512 tokenów (w dużym przybliżeniu 1 token odpowiada 1 słowu). Jest to wymuszone samą architekturą sieci neuronowej i nie da się łatwo obejść. Dyskusję na ten temat można znaleźć [tutaj](https://github.com/google-research/bert/issues/27).
+### 2. Rozszerzenie na dłuższe teksty
+Domyślnie modele typu BERT mogą przetwarzać tekst o maksymalnej długości 512 tokenów (w dużym przybliżeniu 1 token odpowiada 1 słowu). Jest to wymuszone samą architekturą sieci neuronowej i nie da się łatwo obejść. Szczegóły rozwiązania są opisane w [dokumencie](docs/roberta_for_longer_texts.md).
 
 ## Instalacja środowiska
 Biblioteka wymaga instalacji torcha w wersji kompatybilnej z maszyną i CUDA. Następnie instalujemy pozostałe paczki za pomocą ```bash env_setup.sh```. Bardziej szczegółowy opis znajduje się w [Setup środowiska dla nowego projektu](docs/setup_env.md).
@@ -28,7 +27,7 @@ Biblioteka wymaga instalacji torcha w wersji kompatybilnej z maszyną i CUDA. Na
 W pierwszej kolejności ściągamy model RoBERTa wytrenowany na korpusie języka polskiego. Jest to plik ```roberta_base_transformers.zip``` na  [stronie](https://github.com/sdadas/polish-roberta/releases). Po ściągnięciu, rozpakowujemy pliki. Ścieżkę do katalogu kopiujemy do pliku z konfiguracją ```config.py``` np. ```ROBERTA_PATH = "../resources/roberta"```.
 
 ## Konfiguracja
-W pliku ```config.py``` podajemy ścieżkę do ściągniętego modelu oraz podać GPU, na którym chcemy puszczać model. Można wybrać kilka GPU np. ```VISIBLE_GPUS = "0,2,3"```.
+W pliku ```config.py``` podajemy ścieżkę do ściągniętego modelu oraz podać GPU, na którym chcemy puszczać model. Można wybrać kilka GPU np. ```VISIBLE_GPUS = "0,2,3"```. W pliku konfiguracyjnym można także zmieniać domyślne hiperparametry modeli.
 
 ## Testy
 Żeby upewnić się, że wszystko działa, puszczamy testy poleceniem ```pytest test```.
