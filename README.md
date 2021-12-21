@@ -4,8 +4,22 @@
 
 Cele projektu:
 
-1. Stworzenie wygodnego interfejsu modelu RoBERTa za pomocą klasy z metodami fit i predict
-2. Implementacja modelu dla tekstów dłuższych niż 512 tokenów za pomocą max poolingu
+1. Stworzenie wygodnego, prostego interfejsu modelu RoBERTa dla klasyfikacji binarnej pozwalającego na natychmiastowe użycie bez konieczności zaznajamiania się np. z biblioteką `transformers` ([dokładniejszy opis](docs/roberta_interface.md))
+2. Rozszerzenie modelu dla tekstów dłuższych niż 512 tokenów za pomocą max/mean poolingu ([dokładniejszy opis](docs/roberta_for_longer_texts.md))
+
+## Motywacja
+### Interfejs
+Istniejące instrukcje na temat transfer learningu modeli typu BERT wymagają zgłębiania szczegółów dotyczących architektury modelu, tokenizacji, konkretnych bibliotek, etc.. Rzecz jasna, taka wiedza jest wartościowa, jednak z punktu widzenia użytkownika, przydatne jest posiadanie prostego narzędzia z minimalnym interfejsem do trenowania modelu i predykcji podając minimalne dane tj. surowe teksty oraz ich oznaczenia. Dzięki temu można dużo szybciej w pierwszej kolejności zbudować prototyp i zobaczyć, jakie daje wyniki.
+
+Przykładowe alternatywne rozwiązania:
+- [Transfer Learning for NLP: Fine-Tuning BERT for Text Classification](https://www.analyticsvidhya.com/blog/2020/07/transfer-learning-for-nlp-fine-tuning-bert-for-text-classification/) - złożony tutorial krok po kroku
+- [Fine-tuning a pretrained model](https://huggingface.co/docs/transformers/training) - stosunkowa prosta implementacja, jednak nadal wymagana jest pewna znajomość biblioteki `transformers` oraz jawne przekształcanie tekstu i tworzenie datasetu
+
+Zalety przygotowanego rozwiązania:
+- inputem są minimalne surowe dane, tj. listy tekstów i oznaczeń. Wszelkie przekształcenia, tokenizacje, przygotowanie datasetów i dataloaderów dzieją się automatycznie pod spodem
+- minimalny interfejs - klasa modelu wyposażona w metody `fit` oraz `predict`.
+### Rozszerzenie na dłuższe teksty
+Domyślnie modele typu BERT mogą przetwarzać tekst o maksymalnej długości 512 tokenów (w dużym przybliżeniu 1 token odpowiada 1 słowu). Jest to wymuszone samą architekturą sieci neuronowej i nie da się łatwo obejść. Dyskusję na ten temat można znaleźć [tutaj](https://github.com/google-research/bert/issues/27).
 
 ## Instalacja środowiska
 Biblioteka wymaga instalacji torcha w wersji kompatybilnej z maszyną i CUDA. Następnie instalujemy pozostałe paczki za pomocą ```bash env_setup.sh```. Bardziej szczegółowy opis znajduje się w [Setup środowiska dla nowego projektu](docs/setup_env.md).
@@ -17,7 +31,18 @@ W pierwszej kolejności ściągamy model RoBERTa wytrenowany na korpusie języka
 W pliku ```config.py``` podajemy ścieżkę do ściągniętego modelu oraz podać GPU, na którym chcemy puszczać model. Można wybrać kilka GPU np. ```VISIBLE_GPUS = "0,2,3"```.
 
 ## Testy
-Żeby upewnić się, że wszystko działa, puszczamy testy poleceniem ```python3 -m pytest test```.
+Żeby upewnić się, że wszystko działa, puszczamy testy poleceniem ```pytest test```.
+
+## Modele
+Zaimplementowane są dwie klasy modeli:
+- `RobertaClassificationModel` - bazowy model klasyfikacji binarnej, teksty dłuższe niż 512 tokenów są ucinane
+- `RobertaClassificationModelWithPooling` - model zmodyfikowany dla dłuższych tekstów ([dokładniejszy opis](docs/roberta_for_longer_texts.md))
+
+## Interfejs
+Modele wyposażone są w metody:
+- `fit` - dotrenowanie modelu dla listy tekstów i labeli
+- `predict` - policzenie prawdopodobieństw dla listy tekstów. Model musi być dotrenowany
+- `train_and_evaluate` - jednoczesny trening i ewaluacja modelu oraz policzenie metryk na zbiorach train i test w kolejnych epokach
 
 ## Przykład użycia - metody fit i predict
 
@@ -116,4 +141,4 @@ Epoch: 4, Train accuracy: 0.96875, Train loss: 0.12159209074452519
 Epoch: 4, Test accuracy: 0.95, Test loss: 0.12857716977596284
 ```
 
-Dodatkowo metryki są zapisane w zmiennej `result`.
+Dodatkowo metryki w kolejnych epokach są zapisane w zmiennej `result`.

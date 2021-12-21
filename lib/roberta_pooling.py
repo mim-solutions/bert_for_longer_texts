@@ -63,7 +63,7 @@ def stack_tokens_from_all_chunks(input_id_chunks,mask_chunks):
     input_ids = torch.stack(input_id_chunks)
     attention_mask = torch.stack(mask_chunks)
 
-    return input_ids.int(), attention_mask.int()
+    return input_ids.long(), attention_mask.int()
 
 def transform_text_to_model_input(text,tokenizer, size = 510, step = 510, minimal_length = 100):
     ''' Transforms the entire text to model input of roberta model'''

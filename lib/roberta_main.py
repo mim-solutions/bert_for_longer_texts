@@ -14,30 +14,12 @@ from lib.base_model import Model
 from lib.custom_datasets import TokenizedDataset, collate_fn_pooled_tokens
 
 from lib.text_preprocessors import RobertaTokenizer, RobertaTokenizerPooled
-from config import ROBERTA_PATH
-
-## Model default params
-
-DefaultParamsRoberta = {
-    'device' : 'cuda:0',
-    'batch_size' : 6,
-    'learning_rate' : 5e-6
-}
-
-DefaultParamsRobertaWithPooling = {
-    'device' : 'cuda:0',
-    'batch_size' : 6,
-    'learning_rate' : 5e-6,
-    'pooling_strategy': 'mean',
-    'size': 510,
-    'step': 256,
-    'minimal_length': 1
-}
+from config import ROBERTA_PATH, DEFAULT_PARAMS_ROBERTA, DEFAULT_PARAMS_ROBERTA_WITH_POOLING
 
 ## Main class
 
 class RobertaClassificationModel(Model):
-    def __init__(self, params = DefaultParamsRoberta):
+    def __init__(self, params = DEFAULT_PARAMS_ROBERTA):
         super().__init__()
         self.params = params
         tokenizer, roberta = load_pretrained_model()
@@ -61,7 +43,7 @@ class RobertaClassificationModel(Model):
         return preds, labels
 
 class RobertaClassificationModelWithPooling(Model):
-    def __init__(self, params = DefaultParamsRobertaWithPooling):
+    def __init__(self, params = DEFAULT_PARAMS_ROBERTA_WITH_POOLING):
         super().__init__()
         self.params = params
         tokenizer, roberta = load_pretrained_model()
