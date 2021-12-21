@@ -7,11 +7,16 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
 class Model():
+    '''
+    Abstract class for models
+    '''
     def __init__(self):
         self.params = None
         self.preprocessor = None
         self.dataset_class = None
         self.collate_fn = None
+    def evaluate_single_batch(self,batch,model,device):
+        raise NotImplementedError("This is implemented for subclasses only")
     def create_dataset(self,X_preprocessed,y):
         dataset = self.dataset_class(X_preprocessed,y)
         return dataset
@@ -64,20 +69,6 @@ class Model():
         # Prediction
         _, _, preds, _ = self.evaluate_single_epoch(test_samples,test_dataloader)
         return preds
-    def evaluate_single_batch(self,batch,model,device):
-        # push the batch to gpu
-        batch = [t.to(device) for t in batch]
-
-        model_input = batch[:-1]
-
-        labels = batch[-1]
-
-        # model predictions
-        preds = model(*model_input)
-        preds = torch.flatten(preds).cpu()
-        labels = labels.float().cpu()
-        return preds, labels
-
     def train_single_epoch(self,number_of_train_samples,train_dataloader):
         model = self.nn
         model.train()

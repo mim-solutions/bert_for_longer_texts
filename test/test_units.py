@@ -14,7 +14,7 @@ from lib.text_preprocessors import tokenize, tokenize_pooled, RobertaTokenizer
 from lib.custom_datasets import TokenizedDataset
 
 from lib.roberta_pooling import (tokenize_all_text, split_overlapping, split_tokens_into_smaller_chunks,
- add_special_tokens_at_beginning_and_end, add_padding_tokens, reshape_tokens_for_model_input,
+ add_special_tokens_at_beginning_and_end, add_padding_tokens, stack_tokens_from_all_chunks,
  transform_text_to_model_input)
 
 SAMPLE_LONGER_TEXT_PATH = 'test/sample_data/sample.txt'
@@ -33,7 +33,7 @@ class TestBaseModelUnits(unittest.TestCase):
         texts = [text]
 
         tokenized = tokenize(texts,tokenizer)
-        result_list = tokenized[0][0].tolist()
+        result_list = tokenized['input_ids'][0].numpy().tolist()
 
         self.assertEqual(result_list,expected_result)
 
@@ -43,13 +43,14 @@ class TestBaseModelUnits(unittest.TestCase):
 
         text = 'Ala ma kota'
         texts = [text]
-        expected_result = [[[0, 14065, 55, 22098, 2], [1, 1, 1, 1, 1]]]
 
         preprocessed = preprocessor.preprocess(texts)
-
-        result_list = preprocessed.tolist()
-
-        self.assertEqual(result_list,expected_result)
+        input_ids = preprocessed['input_ids'][0].numpy().tolist()
+        expected_result = [0, 14065, 55, 22098, 2]
+        self.assertEqual(input_ids,expected_result)
+        attention_mask = preprocessed['attention_mask'][0].numpy().tolist()
+        expected_result = [1, 1, 1, 1, 1]
+        self.assertEqual(attention_mask,expected_result)
 
     def test_create_dataset(self):
         tokenizer = load_tokenizer()
@@ -66,17 +67,23 @@ class TestBaseModelUnits(unittest.TestCase):
         # Test dataloaders
         test_dataloader = create_test_dataloader(dataset,2)
         loaded_sample = next(iter(test_dataloader))
-
+        input_ids = loaded_sample[0].numpy().tolist()
         expected_result = [[0, 14065, 55, 22098, 5, 2, 1, 1], [0, 40946, 6265, 6, 25090, 68, 5, 2]]
-        result_list = loaded_sample[0].numpy().tolist()
+        self.assertEqual(input_ids,expected_result)
+        attention_mask = loaded_sample[1].numpy().tolist()
+        expected_result = [[1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1]]
+        self.assertEqual(attention_mask,expected_result)
+        labels_obtained = loaded_sample[2].numpy().tolist()
+        expected_result =[0,1]
+        self.assertEqual(labels_obtained,expected_result)
 
-        self.assertEqual(result_list,expected_result)
+
 
 class TestPoolingUnits(unittest.TestCase):
     """
     Tests for single functions and objects
     """
-    
+
     def test_pooling_functions(self):
         tokenizer = load_tokenizer()
         # Load example text
@@ -123,16 +130,16 @@ class TestPoolingUnits(unittest.TestCase):
         self.assertEqual(last_token_id,expected_result)
 
         # Test reshaping tokens for model input
-        input_dict = reshape_tokens_for_model_input(input_id_chunks, mask_chunks)
-        result = list(input_dict['input_ids'].shape)
+        input_ids, attention_mask = stack_tokens_from_all_chunks(input_id_chunks, mask_chunks)
+        result = list(input_ids.shape)
         expected_result = [12,512]
 
         self.assertEqual(result,expected_result)
 
         # Integrated test for combined method transform_text_to_model_input
-        input_dict = transform_text_to_model_input(longer_text,tokenizer,size,step,minimal_length)
+        input_ids, attention_mask = transform_text_to_model_input(longer_text,tokenizer,size,step,minimal_length)
 
-        result = list(input_dict['input_ids'].shape)
+        result = list(input_ids.shape)
         expected_result = [12,512]
 
         self.assertEqual(result,expected_result)
@@ -149,11 +156,13 @@ class TestPoolingUnits(unittest.TestCase):
 
         texts = [longer_text, longer_text]
 
-        result = tokenize_pooled(texts, tokenizer, size, step, minimal_length)
+        tokens = tokenize_pooled(texts, tokenizer, size, step, minimal_length)
         # Test if the result has an expected shape
-        self.assertEqual(len(result),len(texts))
-        self.assertEqual(list(result[0][0].shape),[12,512])
+        self.assertEqual(len(tokens['input_ids']),len(texts))
+        result = list(tokens['input_ids'][0].shape)
+        expected_result = [12,512]
 
+        self.assertEqual(result, expected_result)
 
     def test_split_overlapping(self):
         example_list = [1,2,3,4,5]
@@ -165,4 +174,3 @@ class TestPoolingUnits(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-        

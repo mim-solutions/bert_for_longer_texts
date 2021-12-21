@@ -18,6 +18,7 @@ from sklearn.model_selection import train_test_split
 from lib.roberta_main import RobertaClassificationModel, RobertaClassificationModelWithPooling
 
 SAMPLE_DATA_PATH = 'test/sample_data/sample_data.csv'
+MODEL_CLASSES_TO_TEST = [RobertaClassificationModel, RobertaClassificationModelWithPooling]
 EPOCHS = 2
 
 class TestModels(unittest.TestCase):
@@ -26,7 +27,7 @@ class TestModels(unittest.TestCase):
     """
     
 
-    def test_fit_predict_methods(self):
+    def test_model_methods(self):
         df = pd.read_csv(SAMPLE_DATA_PATH)
 
         texts = df['sentence'].tolist()
@@ -34,7 +35,8 @@ class TestModels(unittest.TestCase):
 
         X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2, random_state=42)
 
-        model_classes = [RobertaClassificationModel, RobertaClassificationModelWithPooling]
+        model_classes = MODEL_CLASSES_TO_TEST
+
         for model_class in model_classes:
             print(f'Testing model class {model_class}')
             # Test fit and predict methods

@@ -58,16 +58,12 @@ def add_padding_tokens(input_id_chunks,mask_chunks):
                 mask_chunks[i], torch.Tensor([0] * pad_len)
             ])
             
-def reshape_tokens_for_model_input(input_id_chunks,mask_chunks):
+def stack_tokens_from_all_chunks(input_id_chunks,mask_chunks):
     ''' Reshapes data to a form compatible with roberta model input'''
     input_ids = torch.stack(input_id_chunks)
     attention_mask = torch.stack(mask_chunks)
 
-    input_dict = {
-        'input_ids': input_ids.long(),
-        'attention_mask': attention_mask.int()
-    }
-    return input_dict
+    return input_ids.int(), attention_mask.int()
 
 def transform_text_to_model_input(text,tokenizer, size = 510, step = 510, minimal_length = 100):
     ''' Transforms the entire text to model input of roberta model'''
@@ -75,5 +71,5 @@ def transform_text_to_model_input(text,tokenizer, size = 510, step = 510, minima
     input_id_chunks, mask_chunks = split_tokens_into_smaller_chunks(tokens,size,step,minimal_length)
     add_special_tokens_at_beginning_and_end(input_id_chunks,mask_chunks)
     add_padding_tokens(input_id_chunks,mask_chunks)
-    input_dict = reshape_tokens_for_model_input(input_id_chunks,mask_chunks)
-    return input_dict
+    input_ids, attention_mask = stack_tokens_from_all_chunks(input_id_chunks,mask_chunks)
+    return [input_ids, attention_mask]
