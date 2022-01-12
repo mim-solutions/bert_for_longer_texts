@@ -25,7 +25,7 @@ The advantages of our wrapper:
 
 ### 2. BERT for longer texts
 
-The BERT model can process texts of maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. More details are described in a [document](docs/roberta_for_longer_texts.md).
+The BERT model can process texts of maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. More details are described in a [document](docs/bert_for_longer_texts.md).
 
 ## Installation and dependencies
 
@@ -38,7 +38,7 @@ As a default the standard english `bert-base-uncased` model is used as a pretrai
 It is possible to use custom models for other languages. Below we describe how to do this for polish roberta model:
 
 - In the first step we need to download the BERT model pretrained on corpora of texts in a given language.
-- For polish it is the file ```roberta_base_transformers.zip``` from  [here](https://github.com/sdadas/polish-roberta/releases). After download, unzip files and copy the path to the config file ```config.py``` eg. ```ROBERTA_PATH = "../resources/roberta"``` and set `MODEL_LOAD_FROM_FILE = True`.
+- For polish it is the file ```roberta_base_transformers.zip``` from  [here](https://github.com/sdadas/polish-roberta/releases). After download, unzip files and copy the path to the config file ```config.py``` eg. ```MODEL_PATH = "../resources/roberta"``` and set `MODEL_LOAD_FROM_FILE = True`.
 
 ## Configuration
 
@@ -49,8 +49,8 @@ To make sure that everything works properly, run the command ```pytest test```.
 
 ## Model classes
 Two main classes are implemented:
-- `RobertaClassificationModel` - base binary classification model, longer texts are truncated to 512 tokens
-- `RobertaClassificationModelWithPooling` - extended model for longer texts ([more details here](docs/roberta_for_longer_texts.md))
+- `BERTClassificationModel` - base binary classification model, longer texts are truncated to 512 tokens
+- `BERTClassificationModelWithPooling` - extended model for longer texts ([more details here](docs/bert_for_longer_texts.md))
 
 ## Interface
 The main methods are:
