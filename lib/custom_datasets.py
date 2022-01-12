@@ -1,8 +1,10 @@
 from torch.utils.data import Dataset
 
+
 class TextDataset(Dataset):
     ''' Dataset for raw texts with labels'''
-    def __init__(self,texts,labels):
+
+    def __init__(self, texts, labels):
         self.texts = texts
         self.labels = labels
 
@@ -10,11 +12,13 @@ class TextDataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        return self.texts[idx],self.labels[idx]
+        return self.texts[idx], self.labels[idx]
+
 
 class TokenizedDataset(Dataset):
     ''' Dataset for tokens with labels'''
-    def __init__(self,tokens,labels):
+
+    def __init__(self, tokens, labels):
         self.input_ids = tokens['input_ids']
         self.attention_mask = tokens['attention_mask']
         self.labels = labels
@@ -23,7 +27,8 @@ class TokenizedDataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        return self.input_ids[idx],self.attention_mask[idx],self.labels[idx]
+        return self.input_ids[idx], self.attention_mask[idx], self.labels[idx]
+
 
 def collate_fn_pooled_tokens(data):
     input_ids = [data[i][0] for i in range(len(data))]
