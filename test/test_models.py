@@ -15,10 +15,10 @@ os.environ["CUDA_VISIBLE_DEVICES"]= VISIBLE_GPUS
 import torch
 
 from sklearn.model_selection import train_test_split
-from lib.roberta_main import RobertaClassificationModel, RobertaClassificationModelWithPooling
+from lib.main import BERTClassificationModel, BERTClassificationModelWithPooling
 
-SAMPLE_DATA_PATH = 'test/sample_data/sample_data.csv'
-MODEL_CLASSES_TO_TEST = [RobertaClassificationModel, RobertaClassificationModelWithPooling]
+SAMPLE_DATA_PATH = 'test/sample_data/sample_data_eng.csv'
+MODEL_CLASSES_TO_TEST = [BERTClassificationModel, BERTClassificationModelWithPooling]
 EPOCHS = 2
 
 class TestModels(unittest.TestCase):

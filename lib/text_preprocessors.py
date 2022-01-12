@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from lib.roberta_pooling import transform_text_to_model_input
+from lib.pooling import transform_text_to_model_input
 
 
 class Preprocessor():
@@ -13,14 +13,14 @@ class Preprocessor():
     def preprocess(self,array_of_texts):
         raise NotImplementedError("Preprocessing is implemented for subclasses only")
 
-class RobertaTokenizer(Preprocessor):
+class BERTTokenizer(Preprocessor):
     def __init__(self,tokenizer):
         self.tokenizer = tokenizer
     def preprocess(self,array_of_texts):
         tokens = tokenize(array_of_texts,self.tokenizer)
         return tokens
 
-class RobertaTokenizerPooled(Preprocessor):
+class BERTTokenizerPooled(Preprocessor):
     def __init__(self,tokenizer,size,step,minimal_length):
         self.tokenizer = tokenizer
         self.text_splits_params = [size,step,minimal_length]
