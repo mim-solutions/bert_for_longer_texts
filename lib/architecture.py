@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class BERTSequenceClassificationHead(nn.Module):
     def __init__(self):
 
@@ -11,13 +12,12 @@ class BERTSequenceClassificationHead(nn.Module):
 
         # dense layer 1
         #self.dense = nn.Linear(768,768)
-        
+
         # dense layer 2 (Output layer)
-        self.out_proj = nn.Linear(768,1)
+        self.out_proj = nn.Linear(768, 1)
 
-        #sigmoid activation function
+        # sigmoid activation function
         self.sigmoid = nn.Sigmoid()
-
 
     def forward(self, cls_token_hidden_state):
         x = cls_token_hidden_state
@@ -26,7 +26,7 @@ class BERTSequenceClassificationHead(nn.Module):
         #x = torch.tanh(x)
         #x = self.dropout(x)
         x = self.out_proj(x)
-        
+
         # apply softmax activation
         x = self.sigmoid(x)
 
@@ -41,21 +41,22 @@ class BERTSequenceClassificationArch(nn.Module):
 
         self.bert = bert
         self.classification_head = BERTSequenceClassificationHead()
-        
-    #define the forward pass
+
+    # define the forward pass
     def forward(self, input_ids, attention_mask):
 
-        #pass the inputs to the model
+        # pass the inputs to the model
 
-        x = bert_vectorize(self.bert,input_ids,attention_mask)
+        x = bert_vectorize(self.bert, input_ids, attention_mask)
 
         # pass vectorized output to classification head
 
         x = self.classification_head(x)
         return x
 
+
 def bert_vectorize(bert, input_ids, attention_mask):
-    outputs = bert(input_ids,attention_mask)
+    outputs = bert(input_ids, attention_mask)
     sequence_output = outputs[0]
 
     vectorized = sequence_output[:, 0, :]  # take <s> token (equiv. to [CLS])
