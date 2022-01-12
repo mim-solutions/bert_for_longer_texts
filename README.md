@@ -49,13 +49,13 @@ Two main classes are implemented:
 - `RobertaClassificationModel` - base binary classification model, longer texts are truncated to 512 tokens
 - `RobertaClassificationModelWithPooling` - extended model for longer texts ([more details here](docs/roberta_for_longer_texts.md))
 
-## Interfaced
+## Interface
 The main methods are:
 - `fit` - fine-tune the model to the training set, uses list of raw texts and labels
 - `predict` - calculate the list of probabilities for given list of raw texts. Model must fine-tuned before that.
 - `train_and_evaluate` - train and evaluate model on given train and test sets. Useful for example for obtaining the learning curve
 
-## Przykład użycia - metody fit i predict
+## Usage example - methods fit and predict
 
 ```
 import pandas as pd
@@ -105,7 +105,7 @@ Epoch: 4, Train accuracy: 0.940625, Train loss: 0.164382476080209
 Test accuracy: 0.925
  ```
 
-## Przykład użycia - metoda train_and_evaluate
+## Usage example - method train_and_evaluate
 
 ```
 import pandas as pd
