@@ -1,6 +1,6 @@
-# Przydatne hooki do gita (trzeba ustawić w `.git/hooks`)
+# Useful git hooks (should be added in `.git/hooks`)
 
-UWAGA! Trzeba ustawić u siebie lokalnie te pliki jako wykonywalne:
+They must be set as executables:
 
 ```
 chmod a+x .git/hooks/pre-commit
@@ -8,7 +8,8 @@ chmod a+x .git/hooks/pre-commit
 
 ### pre-commit
 
-dodaje wersje "stripped" notebooków, które zawierają tylko kod pythona z tych notebooków
+this hook adds stripped version of notebooks with raw python code - this makes analysis diffs and code review easier:
+
 ```
 #!/bin/bash
 git diff --cached --name-only --diff-filter=ACM | while IFS='' read -r line || [[ -n "$line" ]]; do
