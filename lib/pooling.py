@@ -59,14 +59,14 @@ def add_padding_tokens(input_id_chunks,mask_chunks):
             ])
             
 def stack_tokens_from_all_chunks(input_id_chunks,mask_chunks):
-    ''' Reshapes data to a form compatible with roberta model input'''
+    ''' Reshapes data to a form compatible with BERT model input'''
     input_ids = torch.stack(input_id_chunks)
     attention_mask = torch.stack(mask_chunks)
 
     return input_ids.long(), attention_mask.int()
 
 def transform_text_to_model_input(text,tokenizer, size = 510, step = 510, minimal_length = 100):
-    ''' Transforms the entire text to model input of roberta model'''
+    ''' Transforms the entire text to model input of BERT model'''
     tokens = tokenize_all_text(text,tokenizer)
     input_id_chunks, mask_chunks = split_tokens_into_smaller_chunks(tokens,size,step,minimal_length)
     add_special_tokens_at_beginning_and_end(input_id_chunks,mask_chunks)

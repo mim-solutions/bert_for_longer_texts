@@ -1,5 +1,5 @@
 """
-Test for models
+Unit test - this was done for polish roberta model, as default these tests are skipped
 """
 
 import unittest
@@ -9,16 +9,19 @@ import pandas as pd
 import numpy as np
 
 from lib.base_model import create_test_dataloader
-from lib.roberta_main import load_tokenizer
-from lib.text_preprocessors import tokenize, tokenize_pooled, RobertaTokenizer
+from lib.main import load_tokenizer
+from lib.text_preprocessors import tokenize, tokenize_pooled, BERTTokenizer
 from lib.custom_datasets import TokenizedDataset
 
-from lib.roberta_pooling import (tokenize_all_text, split_overlapping, split_tokens_into_smaller_chunks,
+from lib.pooling import (tokenize_all_text, split_overlapping, split_tokens_into_smaller_chunks,
  add_special_tokens_at_beginning_and_end, add_padding_tokens, stack_tokens_from_all_chunks,
  transform_text_to_model_input)
 
 SAMPLE_LONGER_TEXT_PATH = 'test/sample_data/sample.txt'
 
+RUN_UNIT_TESTS = False
+
+@unittest.skipIf(RUN_UNIT_TESTS is False, "skip test for polish language")
 class TestBaseModelUnits(unittest.TestCase):
     """
     Tests for single functions and objects
@@ -39,7 +42,7 @@ class TestBaseModelUnits(unittest.TestCase):
 
     def test_preprocessor(self):
         tokenizer = load_tokenizer()
-        preprocessor = RobertaTokenizer(tokenizer)
+        preprocessor = BERTTokenizer(tokenizer)
 
         text = 'Ala ma kota'
         texts = [text]
@@ -54,7 +57,7 @@ class TestBaseModelUnits(unittest.TestCase):
 
     def test_create_dataset(self):
         tokenizer = load_tokenizer()
-        preprocessor = RobertaTokenizer(tokenizer)
+        preprocessor = BERTTokenizer(tokenizer)
 
         texts = ['Ala ma kota.','Chrząszcz brzmi w trzcinie.']
         labels = [0,1]
@@ -78,7 +81,7 @@ class TestBaseModelUnits(unittest.TestCase):
         self.assertEqual(labels_obtained,expected_result)
 
 
-
+@unittest.skipIf(RUN_UNIT_TESTS is False, "skip test for polish language")
 class TestPoolingUnits(unittest.TestCase):
     """
     Tests for single functions and objects

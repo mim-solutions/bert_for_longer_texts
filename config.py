@@ -1,13 +1,14 @@
-ROBERTA_PATH = "../resources/roberta"
-VISIBLE_GPUS = "1"
+MODEL_LOAD_FROM_FILE = False
+MODEL_PATH = "../resources/roberta"
+VISIBLE_GPUS = "6"
 
-DEFAULT_PARAMS_ROBERTA = {
+DEFAULT_PARAMS_BERT = {
     'device' : 'cuda',
     'batch_size' : 6,
     'learning_rate' : 5e-6
 }
 
-DEFAULT_PARAMS_ROBERTA_WITH_POOLING = {
+DEFAULT_PARAMS_BERT_WITH_POOLING = {
     'device' : 'cuda',
     'batch_size' : 6,
     'learning_rate' : 5e-6,

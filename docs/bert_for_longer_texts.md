@@ -21,4 +21,4 @@ According to this, we do the following steps
 - because number of chunks for the given input text is variable, texts after tokenization are tensors with variable length. Default torch class `Dataloader` cannot allow this (because it automatically wants to stack the tensors). That is why we create custom dataloaders with overwritten method `collate_fn` - more details about this can be found [here](https://discuss.pytorch.org/t/dataloader-for-various-length-of-data/6418)
 
 ## Remarks
-- mentioned pooling hyperparameters `size`, `step`, `minimal_length`, `pooling_strategy` are parameters of the class `RobertaClassificationModelWithPooling`
+- mentioned pooling hyperparameters `size`, `step`, `minimal_length`, `pooling_strategy` are parameters of the class `BERTClassificationModelWithPooling`

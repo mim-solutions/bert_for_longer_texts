@@ -7,25 +7,27 @@ import numpy as np
 
 from dataclasses import dataclass
 
-from transformers import RobertaModel, PreTrainedTokenizerFast, AutoModel, AdamW
-from lib.roberta_architecture import RobertaSequenceClassificationArch
+from transformers import PreTrainedTokenizerFast, AutoModel, AdamW
+from transformers import BertTokenizer, BertModel
+
+from lib.architecture import BERTSequenceClassificationArch
 from lib.base_model import Model
 
 from lib.custom_datasets import TokenizedDataset, collate_fn_pooled_tokens
 
-from lib.text_preprocessors import RobertaTokenizer, RobertaTokenizerPooled
-from config import ROBERTA_PATH, DEFAULT_PARAMS_ROBERTA, DEFAULT_PARAMS_ROBERTA_WITH_POOLING
+from lib.text_preprocessors import BERTTokenizer, BERTTokenizerPooled
+from config import MODEL_LOAD_FROM_FILE, MODEL_PATH, DEFAULT_PARAMS_BERT, DEFAULT_PARAMS_BERT_WITH_POOLING
 
 ## Main class
 
-class RobertaClassificationModel(Model):
-    def __init__(self, params = DEFAULT_PARAMS_ROBERTA):
+class BERTClassificationModel(Model):
+    def __init__(self, params = DEFAULT_PARAMS_BERT):
         super().__init__()
         self.params = params
-        tokenizer, roberta = load_pretrained_model()
-        self.preprocessor = RobertaTokenizer(tokenizer)
+        tokenizer, bert = load_pretrained_model()
+        self.preprocessor = BERTTokenizer(tokenizer)
         self.dataset_class = TokenizedDataset
-        self.nn = initialize_model(roberta,self.params['device'])
+        self.nn = initialize_model(bert,self.params['device'])
         self.optimizer = AdamW(self.nn.parameters(),
                   lr = self.params['learning_rate'])          # learning rate
     def evaluate_single_batch(self,batch,model,device):
@@ -42,15 +44,15 @@ class RobertaClassificationModel(Model):
         labels = labels.float().cpu()
         return preds, labels
 
-class RobertaClassificationModelWithPooling(Model):
-    def __init__(self, params = DEFAULT_PARAMS_ROBERTA_WITH_POOLING):
+class BERTClassificationModelWithPooling(Model):
+    def __init__(self, params = DEFAULT_PARAMS_BERT_WITH_POOLING):
         super().__init__()
         self.params = params
-        tokenizer, roberta = load_pretrained_model()
-        self.preprocessor = RobertaTokenizerPooled(tokenizer,params['size'],params['step'],params['minimal_length'])
+        tokenizer, bert = load_pretrained_model()
+        self.preprocessor = BERTTokenizerPooled(tokenizer,params['size'],params['step'],params['minimal_length'])
         self.dataset_class = TokenizedDataset
         self.collate_fn = collate_fn_pooled_tokens
-        self.nn = initialize_model(roberta,self.params['device'])
+        self.nn = initialize_model(bert,self.params['device'])
         self.optimizer = AdamW(self.nn.parameters(),
                   lr = self.params['learning_rate'])          # learning rate
     def evaluate_single_batch(self,batch,model,device):
@@ -98,22 +100,28 @@ class RobertaClassificationModelWithPooling(Model):
 
 def load_pretrained_model():
     tokenizer = load_tokenizer()
-    model = load_roberta()
+    model = load_bert()
 
     return tokenizer, model
 
 def load_tokenizer():
-    tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(ROBERTA_PATH, "tokenizer.json"))
+    if MODEL_LOAD_FROM_FILE:
+        tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(MODEL_PATH, "tokenizer.json"))
+    else:
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     return tokenizer
 
-def load_roberta():
-    model: RobertaModel = AutoModel.from_pretrained(ROBERTA_PATH)
+def load_bert():
+    if MODEL_LOAD_FROM_FILE:
+        model = AutoModel.from_pretrained(MODEL_PATH)
+    else:
+        model = BertModel.from_pretrained("bert-base-uncased")
     return model
 
 
-def initialize_model(roberta,device):
-    # pass the pre-trained roberta model to our defined architecture
-    model = RobertaSequenceClassificationArch(roberta)
+def initialize_model(bert,device):
+    # pass the pre-trained BERT model to our defined architecture
+    model = BERTSequenceClassificationArch(bert)
     # push the model to GPU/CPU
     model = model.to(device)
     # run on multiple GPU's

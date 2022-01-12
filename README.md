@@ -31,15 +31,18 @@ The BERT model can process texts of maximal length of 512 tokens (roughly speaki
 
 Because of the size of BERT model, it is recommended to train it on GPU. Hence it is necessary to install `torch` version compatible with the machine. Other libraries are installed by the bash file `bash env_setup.sh`. This project is built on top of the `transformers` library which provides BERT and BERT-like model implementations compatible with PyTorch framework. More detailed instruction can be found in [Environment setup](docs/setup_env.md).
 
-## Loading the pretrained BERT model
+## Loading the pretrained model
 
-In the first step we need to download the BERT model pretrained on corpora of texts in a given language.
+As a default the standard english `bert-base-uncased` model is used as a pretrained model.
 
-For polish it is the file ```roberta_base_transformers.zip``` from  [here](https://github.com/sdadas/polish-roberta/releases). After download, unzip files and copy the path to the config file ```config.py``` eg. ```ROBERTA_PATH = "../resources/roberta"```.
+It is possible to use custom models for other languages. Below we describe how to do this for polish roberta model:
+
+- In the first step we need to download the BERT model pretrained on corpora of texts in a given language.
+- For polish it is the file ```roberta_base_transformers.zip``` from  [here](https://github.com/sdadas/polish-roberta/releases). After download, unzip files and copy the path to the config file ```config.py``` eg. ```ROBERTA_PATH = "../resources/roberta"``` and set `MODEL_LOAD_FROM_FILE = True`.
 
 ## Configuration
 
- In the file ```config.py``` set the path to the pretrained model described above. Also here we specify the available GPU we want to run the model on. It is allowed to use multiple GPUs, eg. ```VISIBLE_GPUS = "0,2,3"```.
+ In the file ```config.py``` we specify the available GPU we want to run the model on. It is allowed to use multiple GPUs, eg. ```VISIBLE_GPUS = "0,2,3"```.
 
 ## Tests
 To make sure that everything works properly, run the command ```pytest test```.

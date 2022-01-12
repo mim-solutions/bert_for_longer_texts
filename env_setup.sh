@@ -4,7 +4,8 @@ set -e #exit immediately after one of the commands failed
 
 pip install --upgrade pip
 
-pip install jupyter \
+pip install datasets \
+            jupyter \
             matplotlib \
             numpy \
             pandas \
