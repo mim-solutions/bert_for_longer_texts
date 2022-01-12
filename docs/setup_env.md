@@ -1,40 +1,36 @@
-# Setup środowiska dla nowego projektu
+# Environment setup
 
-0. Uruchamiamy condę. Na kulfonie poleceniem:
+1. If we want to create a new python environment, it is recommended to use conda:
 ```
-source /opt/tljh/user/bin/activate
-```
-
-1. Tworzymy nowe środowisko. Instalujemy 'ipykernel', jeśli korzystamy JupyterHub:
-```
-conda create --name roberta_for_longer_texts python=3.8 pip ipykernel
+conda create --name bert_for_longer_texts python=3.8
 ```
 
-2. Aktywujemy środowisko:
+2. Activate the environment
 ```
-conda activate roberta_for_longer_texts
+conda activate bert_for_longer_texts
 ```
 
-3. Instalujemy Pytorch oraz cudatoolkit. Ten punkt niestety zależy od maszyny: sprawdzamy wersję driverów GPU (jeśli w ogóle mamy) poleceniem `nvidia-smi` (np. na kulfonie `470.63.01`), i wybieramy najnowszą wersję cudatoolkit kompatybilną z tymi driverami wg [tej tabelki](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (np. 11.1).
-Jednocześnie condą instalujemy pytorcha, żeby dostać kompatybilny build. Rekomendujemy dodać wymagania minimalnej wersji oraz tego by pakiet pytorch pochodził z kanału pytorch, jak poniżej (inaczej wszelkie dalsze zmiany w condzie mogą nam niechcący podmienić na niższą wersję lub wersję cpu zamiast cuda).
-Cudzysłów jest konieczny (inaczej bash interpretuje `>` jako przekierowanie do pliku `=1.9`).
+3. Install pytorch and cudatoolkit. This depends on the machine - first check the version of GPU drivers by the command `nvidia-smi` and choose the newest version compatible with this drivers according to [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (e.g. 11.1)
+Then we install torch via conda to get the compatible build.
 
-Przykładowa instalacja na szklance (starsze sterowniki)
+Quotation marks below are necessary (otherwise bash interprets `>` as a link to `=1.9`).
+
+Example command for older version:
 
 ```
 conda install cudatoolkit=10.1 "pytorch::pytorch>=1.8" "torchvision>=0.9" -c pytorch -c conda-forge
 ```
 
-Instalacja na kulfonie:
+Example for cuda 11:
 
 ```
 conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
 ```
 
-4. *Konfiguracja na gcloud/dockerfile sprowadza się do tego kroku (zakładając, że w obrazach mamy już Pytorcha i cudatoolkit)*. Z uwagi na kwadratowy algorytm rozwiązywania zależności przez condę, jak również rozmaite problemy cross-platformowe, staramy się instalować pip-em. Instalujemy tylko główne paczki. W tym celu odpalamy z poziomu root-a projektu:
+4. Install other packages by running a command from repo root:
 
 ```
 bash env_setup.sh
 ```
 
-5. Jeśli doinstalowujemy nową paczkę i będziemy z niej korzystać w projekcie (albo zauważyliśmy, że jakiejś brakuje), powinniśmy ją dodać w odpowiednim miejscu w pliku `./env_setup.sh`.
+5. Every new dependency should be added in `./env_setup.sh`.
