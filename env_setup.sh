@@ -13,3 +13,4 @@ pip install datasets \
             scikit-learn \
             tqdm \
             transformers \
+            autopep8 flake8 pycodestyle \

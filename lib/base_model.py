@@ -1,8 +1,6 @@
-import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
@@ -43,18 +41,14 @@ class Model():
     def train_and_evaluate(self, X_train, X_test, y_train, y_test, epochs=3):
         number_of_train_samples = len(X_train)
         number_of_test_samples = len(X_test)
-        # Text preprocessing
         X_train_preprocessed = self.preprocessor.preprocess(X_train)
         X_test_preprocessed = self.preprocessor.preprocess(X_test)
-        # Creating datasets
         train_dataset = self.create_dataset(X_train_preprocessed, y_train)
         test_dataset = self.create_dataset(X_test_preprocessed, y_test)
-        # Creating dataloaders
         train_dataloader = create_train_dataloader(
             train_dataset, self.params['batch_size'], self.collate_fn)
         test_dataloader = create_test_dataloader(
             test_dataset, self.params['batch_size'], self.collate_fn)
-        # Training and evaluating
         result = self.train_and_evaluate_preprocessed(
             number_of_train_samples,
             train_dataloader,
@@ -93,14 +87,10 @@ class Model():
     def predict(self, X_test):
         test_samples = len(X_test)
         y_test = [0] * len(X_test)  # dummy labels
-        # Text preprocessing
         X_test_preprocessed = self.preprocessor.preprocess(X_test)
-        # Creating test dataset
         test_dataset = self.create_dataset(X_test_preprocessed, y_test)
-        # Creating train dataloader
         test_dataloader = create_test_dataloader(
             test_dataset, self.params['batch_size'], self.collate_fn)
-        # Prediction
         _, _, preds, _ = self.evaluate_single_epoch(
             test_samples, test_dataloader)
         return preds
@@ -108,34 +98,22 @@ class Model():
     def train_single_epoch(self, number_of_train_samples, train_dataloader):
         model = self.nn
         model.train()
-
         total_loss = 0
         total_accurate = 0
 
-        # iterate over batches
-        for step, batch in enumerate(train_dataloader):
+        for _, batch in enumerate(train_dataloader):
 
-            # zero the parameter gradients
             self.optimizer.zero_grad()
 
             preds, labels = self.evaluate_single_batch(
                 batch, model, self.params['device'])
 
-            # compute the loss between actual and predicted values
-
             loss, total_accurate, total_loss = calc_loss_and_accuracy(
                 preds, labels, total_loss, total_accurate)
 
-            # backward pass to calculate the gradients
             loss.backward()
-
-            # clip the the gradients to 1.0. It helps in preventing the exploding gradient problem
-            #torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-
-            # update parameters
             self.optimizer.step()
 
-        # compute the train loss of the epoch
         avg_loss = total_loss / number_of_train_samples
         accuracy = total_accurate / number_of_train_samples
         return avg_loss, accuracy
@@ -162,19 +140,14 @@ class Model():
         # deactivate dropout layers
         model.eval()
 
-        # iterate over batches
-        for step, batch in enumerate(test_dataloader):
+        for _, batch in enumerate(test_dataloader):
 
-            # deactivate autograd
             with torch.no_grad():
 
                 preds, labels = self.evaluate_single_batch(
                     batch, model, self.params['device'])
                 preds_total.extend(preds)
                 labels_total.extend(labels)
-
-                # compute the validation loss between actual and predicted
-                # values
 
                 loss, total_accurate, total_loss = calc_loss_and_accuracy(
                     preds, labels, total_loss, total_accurate)

@@ -1,11 +1,6 @@
 import os
 import torch
 import torch.nn as nn
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-
-from dataclasses import dataclass
 
 from transformers import PreTrainedTokenizerFast, AutoModel, AdamW
 from transformers import BertTokenizer, BertModel
@@ -18,8 +13,6 @@ from lib.custom_datasets import TokenizedDataset, collate_fn_pooled_tokens
 from lib.text_preprocessors import BERTTokenizer, BERTTokenizerPooled
 from config import MODEL_LOAD_FROM_FILE, MODEL_PATH, DEFAULT_PARAMS_BERT, DEFAULT_PARAMS_BERT_WITH_POOLING
 
-# Main class
-
 
 class BERTClassificationModel(Model):
     def __init__(self, params=DEFAULT_PARAMS_BERT):
@@ -30,7 +23,7 @@ class BERTClassificationModel(Model):
         self.dataset_class = TokenizedDataset
         self.nn = initialize_model(bert, self.params['device'])
         self.optimizer = AdamW(self.nn.parameters(),
-                               lr=self.params['learning_rate'])          # learning rate
+                               lr=self.params['learning_rate'])
 
     def evaluate_single_batch(self, batch, model, device):
         # push the batch to gpu
@@ -58,7 +51,7 @@ class BERTClassificationModelWithPooling(Model):
         self.collate_fn = collate_fn_pooled_tokens
         self.nn = initialize_model(bert, self.params['device'])
         self.optimizer = AdamW(self.nn.parameters(),
-                               lr=self.params['learning_rate'])          # learning rate
+                               lr=self.params['learning_rate'])
 
     def evaluate_single_batch(self, batch, model, device):
         input_ids = batch[0]
