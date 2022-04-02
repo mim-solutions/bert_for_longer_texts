@@ -10,15 +10,12 @@ conda create --name bert_for_longer_texts python=3.8
 conda activate bert_for_longer_texts
 ```
 
-3. Install pytorch and cudatoolkit. This depends on the machine - first check the version of GPU drivers by the command `nvidia-smi` and choose the newest version compatible with this drivers according to [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (e.g. 11.1)
-Then we install torch via conda to get the compatible build.
-
-Quotation marks below are necessary (otherwise bash interprets `>` as a link to `=1.9`).
+3. Install pytorch and cudatoolkit. This depends on the machine - first check the version of GPU drivers by the command `nvidia-smi` and choose the newest version compatible with this drivers according to [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (e.g. 11.1). Then we install torch via conda to get the compatible build. [Here] we find which torch version is compatible with CUDA version on our machine.
 
 Example command for older version:
 
 ```
-conda install cudatoolkit=10.1 "pytorch::pytorch>=1.8" "torchvision>=0.9" -c pytorch -c conda-forge
+conda install cudatoolkit=10.1 "pytorch::pytorch==1.7.1" "torchvision==0.8.2" -c pytorch -c conda-forge
 ```
 
 Example for cuda 11:
