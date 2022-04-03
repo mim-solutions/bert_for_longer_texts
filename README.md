@@ -58,8 +58,12 @@ The main methods are:
 - `predict` - calculate the list of probabilities for given list of raw texts. Model must fine-tuned before that.
 - `train_and_evaluate` - train and evaluate model on given train and test sets. Useful for example for obtaining the learning curve
 
+## Getting embedding vectors for longer texts
+Additionaly, the library can be used to obtain embedding vectors for longer texts, see [example notebook](ipython/example_get_embedding_vectors.ipynb).
+
 ## Examples
 - [fit and predict method for base model](ipython/example_base_model_fit_predict.ipynb)
 - [train and evaluate method for base model](ipython/example_base_model_train_and_evaluate.ipynb)
 - [fit and predict method for model with pooling](ipython/example_model_with_pooling_fit_predict.ipynb)
 - [train and evaluate method for model with pooling](ipython/example_model_with_pooling_train_and_evaluate.ipynb)
+- [get embedding vectors for longer texts](ipython/example_get_embedding_vectors.ipynb)
