@@ -36,14 +36,14 @@ def test_prediction_order():
     model.fit(x_train, y_train)
     predicted_scores = model.predict_scores(x_test)
 
-    expected_score_papryka = model.predict_scores(['pepper'])[0]
-    expected_score_taboret = model.predict_scores(['chair'])[0]
+    expected_score_pepper = model.predict_scores(['pepper'])[0]
+    expected_score_chair = model.predict_scores(['chair'])[0]
 
     # Test if only last prediction is different
     # This will fail if the predictions are shuffled
     for i in range(len(x_test) - 1):
-        assert predicted_scores[i] == expected_score_papryka
-    assert predicted_scores[-1] == expected_score_taboret
+        assert predicted_scores[i] == expected_score_pepper
+    assert predicted_scores[-1] == expected_score_chair
 
 
 def test_save_and_load():
