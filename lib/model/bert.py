@@ -11,15 +11,14 @@ from torch import Tensor
 from torch.nn import BCELoss, DataParallel, Module, Linear, Sigmoid
 from torch.optim import AdamW, Optimizer
 from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
-from transformers import AutoModel, BatchEncoding, PreTrainedTokenizerFast, BertModel, BertTokenizer
-
+from transformers import AutoModel, AutoTokenizer, BatchEncoding
 from .base import Model
 
 load_dotenv()
 
 
 class BertClassifier(Model):
-    def __init__(self, params: dict, tokenizer: Optional[PreTrainedTokenizerFast] = None,
+    def __init__(self, params: dict, tokenizer: Optional[AutoTokenizer] = None,
                  neural_network: Optional[Module] = None, device: str = 'cuda:0', many_gpus: bool = False):
         if not tokenizer:
             tokenizer = load_tokenizer()
@@ -95,13 +94,9 @@ class BertClassifier(Model):
         model_dir = Path(model_dir)
         with open(file=model_dir / 'params.json', mode='r', encoding='utf-8') as file:
             params = json.load(file)
-        tokenizer_file = str(model_dir / 'tokenizer.json')
-        tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_file)
+        tokenizer = AutoTokenizer.from_pretrained(model_dir)
         neural_network = torch.load(f=model_dir / 'model.bin', map_location=device)
         return cls(params, tokenizer, neural_network, device, many_gpus)
-
-    def train_automatically(self, x_train: list[str], y_train: list[bool]) -> None:
-        pass
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
@@ -145,7 +140,7 @@ class BertClassifier(Model):
 
 
 class BertClassifierNN(Module):
-    def __init__(self, model: BertModel):
+    def __init__(self, model: AutoModel):
         super().__init__()
         self.model = model
 
@@ -179,23 +174,21 @@ class TokenizedDataset(Dataset):
         return self.input_ids[idx], self.attention_mask[idx]
 
 
-def load_tokenizer() -> BertTokenizer:
+def load_tokenizer() -> AutoTokenizer:
     MODEL_LOAD_FROM_FILE = (os.environ['MODEL_LOAD_FROM_FILE'] == "True")
     if MODEL_LOAD_FROM_FILE:
         MODEL_PATH = Path(os.environ['MODEL_PATH'])
-        tokenizer = PreTrainedTokenizerFast(
-            tokenizer_file=os.path.join(
-                MODEL_PATH, "tokenizer.json"))
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     else:
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
     return tokenizer
 
 
-def load_bert() -> BertModel:
+def load_bert() -> AutoModel:
     MODEL_LOAD_FROM_FILE = (os.environ['MODEL_LOAD_FROM_FILE'] == "True")
     if MODEL_LOAD_FROM_FILE:
         MODEL_PATH = Path(os.environ['MODEL_PATH'])
         model = AutoModel.from_pretrained(MODEL_PATH)
     else:
-        model = BertModel.from_pretrained("bert-base-uncased")
+        model = AutoModel.from_pretrained("bert-base-uncased")
     return model
