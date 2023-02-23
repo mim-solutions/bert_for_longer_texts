@@ -18,8 +18,14 @@ load_dotenv()
 
 
 class BertClassifier(Model):
-    def __init__(self, params: dict, tokenizer: Optional[AutoTokenizer] = None,
-                 neural_network: Optional[Module] = None, device: str = 'cuda:0', many_gpus: bool = False):
+    def __init__(
+        self,
+        params: dict,
+        tokenizer: Optional[AutoTokenizer] = None,
+        neural_network: Optional[Module] = None,
+        device: str = "cuda:0",
+        many_gpus: bool = False,
+    ):
         if not tokenizer:
             tokenizer = load_tokenizer()
         if not neural_network:
@@ -33,37 +39,37 @@ class BertClassifier(Model):
         self.neural_network = neural_network
 
         self.neural_network.to(device)
-        if device.startswith('cuda') and many_gpus:
+        if device.startswith("cuda") and many_gpus:
             self.neural_network = DataParallel(self.neural_network)
 
     def fit(self, x_train: list[str], y_train: list[bool], epochs: Optional[int] = None) -> None:
         if not epochs:
-            epochs = self.params['epochs']
-        optimizer = AdamW(self.neural_network.parameters(), lr=self.params['learning_rate'])
+            epochs = self.params["epochs"]
+        optimizer = AdamW(self.neural_network.parameters(), lr=self.params["learning_rate"])
 
         tokens = self._tokenize(x_train)
         dataset = TokenizedDataset(tokens, y_train)
-        dataloader = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params['batch_size'])
+        dataloader = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"])
         for epoch in range(epochs):
             self._train_single_epoch(dataloader, optimizer)
 
     def predict(self, x: list[str], batch_size: Optional[int] = None) -> list[tuple[bool, float]]:
         if not batch_size:
-            batch_size = self.params['batch_size']
+            batch_size = self.params["batch_size"]
         scores = self.predict_scores(x, batch_size)
         classes = [i >= 0.5 for i in scores]
         return list(zip(classes, scores))
 
     def predict_classes(self, x: list[str], batch_size: Optional[int] = None) -> list[bool]:
         if not batch_size:
-            batch_size = self.params['batch_size']
+            batch_size = self.params["batch_size"]
         scores = self.predict_scores(x, batch_size)
         classes = [i >= 0.5 for i in scores]
         return classes
 
     def predict_scores(self, x: list[str], batch_size: Optional[int] = None) -> list[float]:
         if not batch_size:
-            batch_size = self.params['batch_size']
+            batch_size = self.params["batch_size"]
         tokens = self._tokenize(x)
         dataset = TokenizedDataset(tokens)
         dataloader = DataLoader(dataset, sampler=SequentialSampler(dataset), batch_size=batch_size)
@@ -81,33 +87,34 @@ class BertClassifier(Model):
     def save(self, model_dir: str) -> None:
         model_dir = Path(model_dir)
         model_dir.mkdir(parents=True, exist_ok=True)
-        with open(file=model_dir / 'params.json', mode='w', encoding='utf-8') as file:
+        with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
             json.dump(self.params, file)
         self.tokenizer.save_pretrained(model_dir)
         if self.many_gpus:
-            torch.save(self.neural_network.module, model_dir / 'model.bin')
+            torch.save(self.neural_network.module, model_dir / "model.bin")
         else:
-            torch.save(self.neural_network, model_dir / 'model.bin')
+            torch.save(self.neural_network, model_dir / "model.bin")
 
     @classmethod
-    def load(cls, model_dir: str, device: str = 'cuda:0', many_gpus: bool = False) -> BertClassifier:
+    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifier:
         model_dir = Path(model_dir)
-        with open(file=model_dir / 'params.json', mode='r', encoding='utf-8') as file:
+        with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
             params = json.load(file)
         tokenizer = AutoTokenizer.from_pretrained(model_dir)
-        neural_network = torch.load(f=model_dir / 'model.bin', map_location=device)
+        neural_network = torch.load(f=model_dir / "model.bin", map_location=device)
         return cls(params, tokenizer, neural_network, device, many_gpus)
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
         self.tokenizer.pad_token = "<pad>"
-        tokens = self.tokenizer.batch_encode_plus(texts, max_length=512, padding=True, truncation=True,
-                                                  return_tensors='pt')
+        tokens = self.tokenizer.batch_encode_plus(
+            texts, max_length=512, padding=True, truncation=True, return_tensors="pt"
+        )
         return tokens
 
     def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> tuple[float, float]:
         self.neural_network.train()
-        cross_entropy = BCELoss(reduction='sum')
+        cross_entropy = BCELoss(reduction="sum")
 
         total_loss = 0
         total_accurate = 0
@@ -160,9 +167,10 @@ class BertClassifierNN(Module):
 
 class TokenizedDataset(Dataset):
     """Dataset for tokens with optional labels."""
+
     def __init__(self, tokens: BatchEncoding, labels: Optional[list] = None):
-        self.input_ids = tokens['input_ids']
-        self.attention_mask = tokens['attention_mask']
+        self.input_ids = tokens["input_ids"]
+        self.attention_mask = tokens["attention_mask"]
         self.labels = labels
 
     def __len__(self) -> int:
@@ -175,19 +183,19 @@ class TokenizedDataset(Dataset):
 
 
 def load_tokenizer() -> AutoTokenizer:
-    MODEL_LOAD_FROM_FILE = (os.environ['MODEL_LOAD_FROM_FILE'] == "True")
+    MODEL_LOAD_FROM_FILE = os.environ["MODEL_LOAD_FROM_FILE"] == "True"
     if MODEL_LOAD_FROM_FILE:
-        MODEL_PATH = Path(os.environ['MODEL_PATH'])
+        MODEL_PATH = Path(os.environ["MODEL_PATH"])
         tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     else:
-        tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+        tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
     return tokenizer
 
 
 def load_bert() -> AutoModel:
-    MODEL_LOAD_FROM_FILE = (os.environ['MODEL_LOAD_FROM_FILE'] == "True")
+    MODEL_LOAD_FROM_FILE = os.environ["MODEL_LOAD_FROM_FILE"] == "True"
     if MODEL_LOAD_FROM_FILE:
-        MODEL_PATH = Path(os.environ['MODEL_PATH'])
+        MODEL_PATH = Path(os.environ["MODEL_PATH"])
         model = AutoModel.from_pretrained(MODEL_PATH)
     else:
         model = AutoModel.from_pretrained("bert-base-uncased")
