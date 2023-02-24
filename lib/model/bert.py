@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import BCELoss, DataParallel, Module, Linear, Sigmoid
@@ -98,22 +97,22 @@ class BertClassifier(Model):
             torch.save(self.neural_network, model_dir / "model.bin")
 
     def train_and_evaluate(
-        self, x_train: list[str], x_val: list[bool], y_train: list[str], y_val: list[bool], epochs: Optional[int] = None
-    ) -> dict[int, TrainingInfoForSingleEpoch]:
-        """Returns history of train and val predictions for each epoch"""
+        self, x_train: list[str], x_val: list[bool], y_train: list[str], epochs: Optional[int] = None
+    ) -> list[TrainingInfoForSingleEpoch]:
+        """Returns history of train losses and val predictions for each epoch"""
         if not epochs:
             epochs = self.params["epochs"]
         optimizer = AdamW(self.neural_network.parameters(), lr=self.params["learning_rate"])
 
         tokens = self._tokenize(x_train)
         dataset = TokenizedDataset(tokens, y_train)
-        dataloader_train = DataLoader(dataset, sampler=SequentialSampler(dataset), batch_size=self.params["batch_size"])
+        dataloader_train = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"])
         tokens = self._tokenize(x_val)
-        dataset = TokenizedDataset(tokens, y_val)
-        dataloader_val = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"])
-        result = {}
+        dataset = TokenizedDataset(tokens)
+        dataloader_val = DataLoader(dataset, sampler=SequentialSampler(dataset), batch_size=self.params["batch_size"])
+        result = []
         for epoch in range(epochs):
-            result[epoch] = self._train_and_evaluate_single_epoch(dataloader_train, dataloader_val, optimizer)
+            result.append(self._train_and_evaluate_single_epoch(dataloader_train, dataloader_val, optimizer))
         return result
 
     @classmethod
@@ -135,28 +134,16 @@ class BertClassifier(Model):
 
     def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> tuple[float, float]:
         self.neural_network.train()
-        cross_entropy = BCELoss(reduction="sum")
+        cross_entropy = BCELoss()
 
-        total_loss = 0
-        total_accurate = 0
         for step, batch in enumerate(dataloader):
             optimizer.zero_grad()
             labels = batch[-1].float().cpu()
             predictions = self._evaluate_single_batch(batch)
 
-            # calc loss and accuracy
             loss = cross_entropy(predictions, labels)
-            total_loss += loss.detach().cpu().numpy()
-            predicted_classes = predictions.detach().numpy() >= 0.5
-            accurate = sum(predicted_classes == np.array(labels, dtype=bool))
-            total_accurate += accurate
-
             loss.backward()
             optimizer.step()
-
-        avg_loss = total_loss / len(dataloader)
-        accuracy = total_accurate / len(dataloader)
-        return avg_loss, accuracy
 
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
         batch = [t.to(self.device) for t in batch]
