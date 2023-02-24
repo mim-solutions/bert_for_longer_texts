@@ -1,6 +1,6 @@
-from typing import NamedTuple
+from typing import List, NamedTuple
 
 
 class TrainingInfoForSingleEpoch(NamedTuple):
     loss_train: float
-    predictions_val: list[float]
+    predictions_val: List[float]
