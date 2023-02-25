@@ -1,5 +1,5 @@
 from lib.entities.text_split_params import TextSplitParams
-from lib.preprocessing.splitting import split_overlapping
+from lib.model.splitting import split_overlapping
 
 
 def test_split_overlapping():
