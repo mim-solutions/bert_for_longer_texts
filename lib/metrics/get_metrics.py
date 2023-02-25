@@ -1,19 +1,17 @@
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, log_loss
 
-from lib.entities.training_history import TrainingInfoForSingleEpoch
+from lib.entities.learning_curve import LossesSingleEpoch
 
 
-def plot_loss_curves(train_history: list[TrainingInfoForSingleEpoch], y_val: list[bool]):
-    metrics = get_metrics(train_history, y_val)
+def plot_learning_curve(train_history: list[LossesSingleEpoch], y_val: list[bool]):
+    metrics = get_learning_curve(train_history, y_val)
     plot_metrics(metrics)
 
 
-def get_metrics(train_history: list[TrainingInfoForSingleEpoch], y_val: list[bool]) -> dict[str, list[float]]:
+def get_learning_curve(train_history: list[LossesSingleEpoch]) -> dict[str, list[float]]:
     result = {}
     result["train_loss"] = [training_info.loss_train for training_info in train_history]
-    result["val_loss"] = [log_loss(y_val, training_info.predictions_val) for training_info in train_history]
-    result["val_accuracy"] = [accuracy_score(y_val, training_info.predictions_val) for training_info in train_history]
+    result["val_loss"] = [training_info.loss_val for training_info in train_history]
     return result
 
 
