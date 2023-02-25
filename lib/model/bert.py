@@ -92,7 +92,7 @@ class BertClassifier(Model, ABC):
         return total_predictions
 
     def train_and_evaluate(
-        self, x_train: list[str], x_val: list[bool], y_train: list[str], y_val: list[bool], epochs: Optional[int] = None
+        self, x_train: list[str], x_val: list[str], y_train: list[bool], y_val: list[bool], epochs: Optional[int] = None
     ) -> list[LossesSingleEpoch]:
         """Returns history of train and val losses for each epoch"""
         if not epochs:

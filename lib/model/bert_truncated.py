@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Optional
@@ -48,7 +49,7 @@ class BertClassifierTruncated(BertClassifier):
             torch.save(self.neural_network, model_dir / "model.bin")
 
     @classmethod
-    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifier:
+    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifierTruncated:
         model_dir = Path(model_dir)
         with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
             params = json.load(file)

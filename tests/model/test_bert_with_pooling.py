@@ -1,17 +1,27 @@
 from pathlib import Path
 from shutil import rmtree
 
-from lib.model.bert_truncated import BertClassifierTruncated
+from lib.model.bert_with_pooling import BertClassifierWithPooling
+
+MODEL_PARAMS = {
+    "batch_size": 1,
+    "learning_rate": 5e-5,
+    "epochs": 1,
+    "size": 510,
+    "step": 256,
+    "minimal_length": 1,
+    "pooling_strategy": "mean",
+}
 
 
 def test_fit_and_predict():
     """The test is quite naive, but it goes through all the methods."""
-    params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifierTruncated(params, device='cpu')
-    x_train = ['carrot', 'cucumber', 'tomato', 'potato']
+    params = MODEL_PARAMS
+    model = BertClassifierWithPooling(params, device="cpu")
+    x_train = ["carrot", "cucumber", "tomato", "potato"]
     y_train = [True] * len(x_train)
 
-    x_test = ['pepper', 'eggplant']
+    x_test = ["pepper", "eggplant"]
     expected_classes = [True, True]
 
     model.fit(x_train, y_train)
@@ -26,18 +36,18 @@ def test_fit_and_predict():
 
 def test_prediction_order():
     """Check if the order of predictions is preserved."""
-    params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifierTruncated(params, device='cpu')
-    x_train = ['carrot', 'cucumber', 'tomato', 'potato']
+    params = MODEL_PARAMS
+    model = BertClassifierWithPooling(params, device="cpu")
+    x_train = ["carrot", "cucumber", "tomato", "potato"]
     y_train = [True] * len(x_train)
 
-    x_test = ['pepper'] * 99 + ['chair'] * 1
+    x_test = ["pepper"] * 99 + ["chair"] * 1
 
     model.fit(x_train, y_train)
     predicted_scores = model.predict_scores(x_test)
 
-    expected_score_pepper = model.predict_scores(['pepper'])[0]
-    expected_score_chair = model.predict_scores(['chair'])[0]
+    expected_score_pepper = model.predict_scores(["pepper"])[0]
+    expected_score_chair = model.predict_scores(["chair"])[0]
 
     # Test if only last prediction is different
     # This will fail if the predictions are shuffled
@@ -47,14 +57,14 @@ def test_prediction_order():
 
 
 def test_save_and_load():
-    params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifierTruncated(params, device='cpu')
-    path = Path('tmp_roberta_model_test_dir')
+    params = MODEL_PARAMS
+    model = BertClassifierWithPooling(params, device="cpu")
+    path = Path("tmp_roberta_model_test_dir")
 
     model.save(str(path))
 
     try:
-        model_loaded = BertClassifierTruncated.load(str(path), device='cpu')
+        model_loaded = BertClassifierWithPooling.load(str(path), device="cpu")
         assert model_loaded.params == params
         # assert types to be more specific than 'isinstance()'
         assert type(model_loaded.tokenizer) == type(model.tokenizer)  # noqa: E721
