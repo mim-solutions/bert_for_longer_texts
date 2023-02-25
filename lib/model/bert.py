@@ -14,6 +14,7 @@ from transformers import AutoModel, AutoTokenizer, BatchEncoding
 
 from lib.entities.learning_curve import LossesSingleEpoch
 from lib.model.base import Model
+from lib.preprocessing.tokenize import tokenize_truncated
 
 load_dotenv()
 
@@ -126,10 +127,7 @@ class BertClassifier(Model):
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
-        self.tokenizer.pad_token = "<pad>"
-        tokens = self.tokenizer.batch_encode_plus(
-            texts, max_length=512, padding=True, truncation=True, return_tensors="pt"
-        )
+        tokens = tokenize_truncated(texts, self.tokenizer)
         return tokens
 
     def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> tuple[float, float]:
