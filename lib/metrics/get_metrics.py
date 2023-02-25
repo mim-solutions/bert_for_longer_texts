@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from lib.entities.learning_curve import LossesSingleEpoch
 
 
-def plot_learning_curve(train_history: list[LossesSingleEpoch], y_val: list[bool]):
-    metrics = get_learning_curve(train_history, y_val)
+def plot_learning_curve(train_history: list[LossesSingleEpoch]):
+    metrics = get_learning_curve(train_history)
     plot_metrics(metrics)
 
 
