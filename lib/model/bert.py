@@ -12,7 +12,6 @@ from torch.optim import AdamW, Optimizer
 from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
 from transformers import AutoModel, AutoTokenizer, BatchEncoding
 
-from lib.entities.learning_curve import LossesSingleEpoch
 from lib.model.base import Model
 
 load_dotenv()
@@ -91,32 +90,6 @@ class BertClassifier(Model, ABC):
                 total_predictions.extend(predictions.tolist())
         return total_predictions
 
-    def train_and_evaluate(
-        self, x_train: list[str], x_val: list[str], y_train: list[bool], y_val: list[bool], epochs: Optional[int] = None
-    ) -> list[LossesSingleEpoch]:
-        """Returns history of train and val losses for each epoch"""
-        if not epochs:
-            epochs = self.params["epochs"]
-        optimizer = AdamW(self.neural_network.parameters(), lr=self.params["learning_rate"])
-
-        tokens = self._tokenize(x_train)
-        dataset = TokenizedDataset(tokens, y_train)
-        dataloader_train = DataLoader(
-            dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"], collate_fn=self.collate_fn
-        )
-        tokens = self._tokenize(x_val)
-        dataset = TokenizedDataset(tokens, y_val)
-        dataloader_val = DataLoader(
-            dataset,
-            sampler=SequentialSampler(dataset),
-            batch_size=self.params["batch_size"],
-            collate_fn=self.collate_fn,
-        )
-        result = []
-        for epoch in range(epochs):
-            result.append(self._train_and_evaluate_single_epoch(dataloader_train, dataloader_val, optimizer))
-        return result
-
     @abstractmethod
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         pass
@@ -137,43 +110,6 @@ class BertClassifier(Model, ABC):
     @abstractmethod
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
         pass
-
-    def _train_and_evaluate_single_epoch(
-        self, dataloader_train: DataLoader, dataloader_val: DataLoader, optimizer: Optimizer
-    ) -> LossesSingleEpoch:
-        self.neural_network.train()
-        cross_entropy = BCELoss(reduction="sum")
-
-        total_loss = 0
-        # activate dropout layers
-        self.neural_network.train()
-        for step, batch in enumerate(dataloader_train):
-            optimizer.zero_grad()
-            labels = batch[-1].float().cpu()
-            predictions = self._evaluate_single_batch(batch)
-
-            loss = cross_entropy(predictions, labels)
-            total_loss += loss.detach().cpu().numpy()
-            loss.backward()
-            optimizer.step()
-
-        avg_loss_train = total_loss / len(dataloader_train)
-
-        total_loss = 0
-        # deactivate dropout layers
-        self.neural_network.eval()
-        for step, batch in enumerate(dataloader_val):
-            # deactivate autograd
-            with torch.no_grad():
-                labels = batch[-1].float().cpu()
-                predictions = self._evaluate_single_batch(batch)
-
-                loss = cross_entropy(predictions, labels)
-                total_loss += loss.detach().cpu().numpy()
-
-        avg_loss_val = total_loss / len(dataloader_val)
-
-        return LossesSingleEpoch(loss_train=avg_loss_train, loss_val=avg_loss_val)
 
 
 class BertClassifierNN(Module):
