@@ -94,7 +94,7 @@ class BertClassifier(Model, ABC):
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         pass
 
-    def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> tuple[float, float]:
+    def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> None:
         self.neural_network.train()
         cross_entropy = BCELoss()
 
