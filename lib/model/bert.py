@@ -1,6 +1,6 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
-import json
 import os
 from pathlib import Path
 
@@ -18,7 +18,8 @@ from lib.model.base import Model
 load_dotenv()
 
 
-class BertClassifier(Model):
+class BertClassifier(Model, ABC):
+    @abstractmethod
     def __init__(
         self,
         params: dict,
@@ -38,6 +39,7 @@ class BertClassifier(Model):
         self.many_gpus = many_gpus
         self.tokenizer = tokenizer
         self.neural_network = neural_network
+        self.collate_fn = None
 
         self.neural_network.to(device)
         if device.startswith("cuda") and many_gpus:
@@ -50,7 +52,9 @@ class BertClassifier(Model):
 
         tokens = self._tokenize(x_train)
         dataset = TokenizedDataset(tokens, y_train)
-        dataloader = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"])
+        dataloader = DataLoader(
+            dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"], collate_fn=self.collate_fn
+        )
         for epoch in range(epochs):
             self._train_single_epoch(dataloader, optimizer)
 
@@ -73,7 +77,9 @@ class BertClassifier(Model):
             batch_size = self.params["batch_size"]
         tokens = self._tokenize(x)
         dataset = TokenizedDataset(tokens)
-        dataloader = DataLoader(dataset, sampler=SequentialSampler(dataset), batch_size=batch_size)
+        dataloader = DataLoader(
+            dataset, sampler=SequentialSampler(dataset), batch_size=batch_size, collate_fn=self.collate_fn
+        )
         total_predictions = []
 
         # deactivate dropout layers
@@ -85,17 +91,6 @@ class BertClassifier(Model):
                 total_predictions.extend(predictions.tolist())
         return total_predictions
 
-    def save(self, model_dir: str) -> None:
-        model_dir = Path(model_dir)
-        model_dir.mkdir(parents=True, exist_ok=True)
-        with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
-            json.dump(self.params, file)
-        self.tokenizer.save_pretrained(model_dir)
-        if self.many_gpus:
-            torch.save(self.neural_network.module, model_dir / "model.bin")
-        else:
-            torch.save(self.neural_network, model_dir / "model.bin")
-
     def train_and_evaluate(
         self, x_train: list[str], x_val: list[bool], y_train: list[str], y_val: list[bool], epochs: Optional[int] = None
     ) -> list[LossesSingleEpoch]:
@@ -106,30 +101,25 @@ class BertClassifier(Model):
 
         tokens = self._tokenize(x_train)
         dataset = TokenizedDataset(tokens, y_train)
-        dataloader_train = DataLoader(dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"])
+        dataloader_train = DataLoader(
+            dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"], collate_fn=self.collate_fn
+        )
         tokens = self._tokenize(x_val)
         dataset = TokenizedDataset(tokens, y_val)
-        dataloader_val = DataLoader(dataset, sampler=SequentialSampler(dataset), batch_size=self.params["batch_size"])
+        dataloader_val = DataLoader(
+            dataset,
+            sampler=SequentialSampler(dataset),
+            batch_size=self.params["batch_size"],
+            collate_fn=self.collate_fn,
+        )
         result = []
         for epoch in range(epochs):
             result.append(self._train_and_evaluate_single_epoch(dataloader_train, dataloader_val, optimizer))
         return result
 
-    @classmethod
-    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifier:
-        model_dir = Path(model_dir)
-        with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
-            params = json.load(file)
-        tokenizer = AutoTokenizer.from_pretrained(model_dir)
-        neural_network = torch.load(f=model_dir / "model.bin", map_location=device)
-        return cls(params, tokenizer, neural_network, device, many_gpus)
-
+    @abstractmethod
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
-        """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
-        tokens = self.tokenizer.batch_encode_plus(
-            texts, max_length=512, padding=True, truncation=True, return_tensors="pt"
-        )
-        return tokens
+        pass
 
     def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> tuple[float, float]:
         self.neural_network.train()
@@ -144,13 +134,9 @@ class BertClassifier(Model):
             loss.backward()
             optimizer.step()
 
+    @abstractmethod
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
-        batch = [t.to(self.device) for t in batch]
-        model_input = batch[:2]
-
-        predictions = self.neural_network(*model_input)
-        predictions = torch.flatten(predictions).cpu()
-        return predictions
+        pass
 
     def _train_and_evaluate_single_epoch(
         self, dataloader_train: DataLoader, dataloader_val: DataLoader, optimizer: Optimizer

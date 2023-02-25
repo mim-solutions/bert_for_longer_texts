@@ -1,13 +1,13 @@
 from pathlib import Path
 from shutil import rmtree
 
-from lib.model.bert import BertClassifier
+from lib.model.bert_truncated import BertClassifierTruncated
 
 
 def test_fit_and_predict():
     """The test is quite naive, but it goes through all the methods."""
     params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifier(params, device='cpu')
+    model = BertClassifierTruncated(params, device='cpu')
     x_train = ['carrot', 'cucumber', 'tomato', 'potato']
     y_train = [True] * len(x_train)
 
@@ -27,7 +27,7 @@ def test_fit_and_predict():
 def test_prediction_order():
     """Check if the order of predictions is preserved."""
     params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifier(params, device='cpu')
+    model = BertClassifierTruncated(params, device='cpu')
     x_train = ['carrot', 'cucumber', 'tomato', 'potato']
     y_train = [True] * len(x_train)
 
@@ -48,13 +48,13 @@ def test_prediction_order():
 
 def test_save_and_load():
     params = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1}
-    model = BertClassifier(params, device='cpu')
+    model = BertClassifierTruncated(params, device='cpu')
     path = Path('tmp_roberta_model_test_dir')
 
     model.save(str(path))
 
     try:
-        model_loaded = BertClassifier.load(str(path), device='cpu')
+        model_loaded = BertClassifierTruncated.load(str(path), device='cpu')
         assert model_loaded.params == params
         # assert types to be more specific than 'isinstance()'
         assert type(model_loaded.tokenizer) == type(model.tokenizer)  # noqa: E721
