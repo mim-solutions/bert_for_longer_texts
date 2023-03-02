@@ -30,8 +30,8 @@ Two main classes are implemented:
 ## Interface
 The main methods are:
 - `fit` - fine-tune the model to the training set, uses list of raw texts and labels
-- `predict_classes` - calculate the list of classification for given list of raw texts. Model must fine-tuned before that.
-- `predict_scores` - calculate the list of probabilities for given list of raw texts. Model must fine-tuned before that.
+- `predict_classes` - calculate the list of classification for given list of raw texts. Model must be fine-tuned before that.
+- `predict_scores` - calculate the list of probabilities for given list of raw texts. Model must be fine-tuned before that.
 
 ## Examples
 - [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
