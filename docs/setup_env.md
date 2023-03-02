@@ -19,7 +19,7 @@ conda activate bert_long
 pip install -r requirements.txt
 ```
 
-6. File `requirements.txt can be updated using the command:
+6. File `requirements.txt` can be updated using the command:
 ```
 bash pip-freeze-without-torch.sh > requirements.txt
 ```
