@@ -34,5 +34,5 @@ The main methods are:
 - `predict_scores` - calculate the list of probabilities for given list of raw texts. Model must fine-tuned before that.
 
 ## Examples
-- [fit and predict method for base model](ipython/example_base_model_fit_predict.ipynb)
-- [fit and predict method for model with pooling](ipython/example_model_with_pooling_fit_predict.ipynb)
+- [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
+- [fit and predict method for model with pooling](notebooks/example_model_with_pooling_fit_predict.ipynb)
