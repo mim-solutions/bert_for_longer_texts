@@ -3,7 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Module
-from transformers import AutoTokenizer, BatchEncoding
+from transformers import BatchEncoding, PreTrainedTokenizerBase
 
 from lib.model.bert import BertClassifier
 
@@ -12,7 +12,7 @@ class BertClassifierTruncated(BertClassifier):
     def __init__(
         self,
         params: dict,
-        tokenizer: Optional[AutoTokenizer] = None,
+        tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
         device: str = "cuda:0",

@@ -9,7 +9,7 @@ from torch import Tensor
 from torch.nn import BCELoss, DataParallel, Module, Linear, Sigmoid
 from torch.optim import AdamW, Optimizer
 from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
-from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, RobertaModel
+from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, PreTrainedTokenizerBase, RobertaModel
 
 
 class BertClassifier(ABC):
@@ -17,7 +17,7 @@ class BertClassifier(ABC):
     def __init__(
         self,
         params: dict,
-        tokenizer: Optional[AutoTokenizer] = None,
+        tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
         device: str = "cuda:0",
