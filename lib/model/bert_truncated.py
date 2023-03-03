@@ -21,7 +21,17 @@ class BertClassifierTruncated(BertClassifier):
         super().__init__(params, tokenizer, neural_network, pretrained_model_name_or_path, device, many_gpus)
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
-        """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
+        """
+        Transforms list of N texts to the BatchEncoding, that is the dictionary with the following keys:
+        - input_ids - Tensor of the size N x 512 of token ids.
+        This is stacked Tensor of encodings of each text.
+        Values of the tensor are integers.
+        - attention_mask - Tensor of the size N x 512 of attention masks.
+        This is stacked Tensor of encodings of each text.
+        Values of the tensor are booleans.
+        If the text is longer than 512 tokens - the rest of it is ignored.
+        If the text is shorter than 512 tokens - it is padded to have exactly 512 tokens.
+        """
         tokens = self.tokenizer.batch_encode_plus(
             texts, max_length=512, padding=True, truncation=True, return_tensors="pt"
         )

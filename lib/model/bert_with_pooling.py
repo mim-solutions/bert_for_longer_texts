@@ -29,7 +29,22 @@ class BertClassifierWithPooling(BertClassifier):
         self.pooling_strategy = params["pooling_strategy"]
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
-        """Transforms list of texts to list of tokens (truncated to 512 tokens)."""
+        """
+        Transforms list of N texts to the BatchEncoding, that is the dictionary with the following keys:
+        - input_ids - List of N tensors of the size K(i) x 512 of token ids.
+        K(i) is the number of chunks of the text i.
+        Each element of the list is stacked Tensor for encoding of each chunk.
+        Values of the tensor are integers.
+        - attention_mask - List of N tensors of the size K x 512 of token ids.
+        K(i) is the number of chunks of the text i.
+        Each element of the list is stacked Tensor for encoding of each chunk.
+        This is stacked Tensor for encoding of each text.
+        Values of the tensor are booleans.
+        If the text is longer than 512 tokens - the rest of it is ignored.
+        If the text is shorter than 512 tokens - it is padded to have exactly 512 tokens.
+        These lists of tensors cannnot be stacked into one tensor,
+        because each text can be divided into different number of chunks
+        """
         tokens = transform_list_of_texts(texts, self.tokenizer, self.text_split_params)
         return tokens
 
