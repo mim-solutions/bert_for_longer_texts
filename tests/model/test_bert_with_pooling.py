@@ -7,9 +7,9 @@ MODEL_PARAMS = {
     "batch_size": 1,
     "learning_rate": 5e-5,
     "epochs": 1,
-    "size": 510,
-    "step": 256,
-    "minimal_length": 1,
+    "chunk_size": 510,
+    "stride": 256,
+    "minimal_chunk_length": 1,
     "pooling_strategy": "mean",
 }
 
@@ -59,7 +59,7 @@ def test_prediction_order():
 def test_save_and_load():
     params = MODEL_PARAMS
     model = BertClassifierWithPooling(**params, device="cpu")
-    path = Path("tmp_roberta_model_test_dir")
+    path = Path("tmp_bert_model_test_dir")
 
     model.save(str(path))
 

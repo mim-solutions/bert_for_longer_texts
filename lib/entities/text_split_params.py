@@ -2,6 +2,6 @@ from typing import NamedTuple
 
 
 class TextSplitParams(NamedTuple):
-    size: int
-    step: int
-    minimal_length: int
+    chunk_size: int
+    stride: int
+    minimal_chunk_length: int

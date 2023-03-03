@@ -6,7 +6,7 @@ from lib.model.splitting import split_overlapping
 
 def test_split_overlapping():
     example_list = Tensor([1, 2, 3, 4, 5])
-    spliting_params = TextSplitParams(size=3, step=2, minimal_length=1)
+    spliting_params = TextSplitParams(chunk_size=3, stride=2, minimal_chunk_length=1)
     expected_result = [Tensor([1, 2, 3]), Tensor([3, 4, 5]), Tensor([5])]
 
     splitted = split_overlapping(example_list, spliting_params)

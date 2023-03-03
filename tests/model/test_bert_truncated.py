@@ -55,7 +55,7 @@ def test_prediction_order():
 def test_save_and_load():
     params = MODEL_PARAMS
     model = BertClassifierTruncated(**params, device="cpu")
-    path = Path("tmp_roberta_model_test_dir")
+    path = Path("tmp_bert_model_test_dir")
 
     model.save(str(path))
 

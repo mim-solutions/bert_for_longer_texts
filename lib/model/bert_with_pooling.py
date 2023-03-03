@@ -14,15 +14,31 @@ from lib.model.splitting import transform_list_of_texts
 
 
 class BertClassifierWithPooling(BertClassifier):
+    """
+    The splitting procedure is the following:
+    - tokenize the whole text (if maximal_text_length=None) or truncate to the size maximal_text_length
+    - split the tokens to chunks of the size chunk_size
+    - tokens may overlap dependent on the parameter stride
+    - in other words: we get chunks by moving the window of the size chunk_size by the length equal to stride
+    - see the example in https://github.com/google-research/bert/issues/27#issuecomment-435265194
+    - stride has the analogous meaning here that in convolutional neural networks
+    - the chunk_size is analogous to kernel_size in CNNs
+    - we ignore chunks which are too small - smaller than minimal_chunk_length
+    After getting the tensor of predictions of all chunks we pool them into one prediction
+    Aggregation function is specified by the string parameter pooling_strategy
+    It can be either "mean" or "max"
+    """
+
     def __init__(
         self,
         batch_size: int,
         learning_rate: float,
         epochs: int,
-        size: int,
-        step: int,
-        minimal_length: int,
-        pooling_strategy: str,
+        chunk_size: int,
+        stride: int,
+        minimal_chunk_length: int,
+        pooling_strategy: str = "mean",
+        maximal_text_length: Optional[int] = None,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
@@ -40,16 +56,18 @@ class BertClassifierWithPooling(BertClassifier):
             many_gpus,
         )
 
-        self.size = size
-        self.step = step
-        self.minimal_length = minimal_length
-        self.device = device
-        self.text_split_params = TextSplitParams(size=size, step=step, minimal_length=minimal_length)
-        self.collate_fn = self.collate_fn_pooled_tokens
+        self.chunk_size = chunk_size
+        self.stride = stride
+        self.minimal_chunk_length = minimal_chunk_length
         if pooling_strategy in ["mean", "max"]:
             self.pooling_strategy = pooling_strategy
         else:
             raise ValueError("Unknown pooling strategy!")
+        self.maximal_text_length = maximal_text_length
+
+        self.device = device
+        self.text_split_params = TextSplitParams(chunk_size, stride, minimal_chunk_length)
+        self.collate_fn = self.collate_fn_pooled_tokens
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
@@ -68,7 +86,7 @@ class BertClassifierWithPooling(BertClassifier):
         These lists of tensors cannnot be stacked into one tensor,
         because each text can be divided into different number of chunks
         """
-        tokens = transform_list_of_texts(texts, self.tokenizer, self.text_split_params)
+        tokens = transform_list_of_texts(texts, self.tokenizer, self.text_split_params, self.maximal_text_length)
         return tokens
 
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
@@ -116,10 +134,11 @@ class BertClassifierWithPooling(BertClassifier):
     def save(self, model_dir: str) -> None:
         super().save(model_dir)
         additional_params = {
-            "size": self.size,
-            "step": self.step,
-            "minimal_length": self.minimal_length,
+            "chunk_size": self.chunk_size,
+            "stride": self.stride,
+            "minimal_chunk_length": self.minimal_chunk_length,
             "pooling_strategy": self.pooling_strategy,
+            "maximal_text_length": self.maximal_text_length,
         }
         with open(file=Path(model_dir) / "params.json", mode="r", encoding="utf-8") as file:
             params = json.load(file)
