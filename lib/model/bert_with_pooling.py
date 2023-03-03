@@ -46,7 +46,10 @@ class BertClassifierWithPooling(BertClassifier):
         self.device = device
         self.text_split_params = TextSplitParams(size=size, step=step, minimal_length=minimal_length)
         self.collate_fn = self.collate_fn_pooled_tokens
-        self.pooling_strategy = pooling_strategy
+        if pooling_strategy in ["mean", "max"]:
+            self.pooling_strategy = pooling_strategy
+        else:
+            raise ValueError("Unknown pooling strategy!")
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
