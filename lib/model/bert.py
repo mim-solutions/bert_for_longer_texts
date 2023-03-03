@@ -13,6 +13,18 @@ from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, Pre
 
 
 class BertClassifier(ABC):
+    """
+    The "device" parameter can have the following values:
+    - "cpu" - the model will be loaded on CPU
+    - "cuda" - the model will be loaded on single GPU
+    - "cuda:i" - the model will be loaded on the specific single GPU with the index i
+
+    It is also possible to use multiple GPUs. In order to do this:
+    - set device to "cuda"
+    - set many_gpu flag to True
+    - as default it will use all of them.
+    To use only selected GPUs - set the environmental variable CUDA_VISIBLE_DEVICES
+    """
     @abstractmethod
     def __init__(
         self,
