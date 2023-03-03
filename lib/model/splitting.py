@@ -90,7 +90,7 @@ def split_overlapping(array: list[T], text_split_params) -> list[list[T]]:
     """Helper function for dividing arrays into overlapping chunks"""
     result = [array[i : i + text_split_params.size] for i in range(0, len(array), text_split_params.step)]
     if len(result) > 1:
-        # ignore chunks with less then minimal_length number of tokens
+        # ignore chunks with less than minimal_length number of tokens
         result = [x for x in result if len(x) >= text_split_params.minimal_length]
     return result
 
