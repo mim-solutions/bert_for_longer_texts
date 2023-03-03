@@ -1,6 +1,4 @@
 from __future__ import annotations
-import json
-from pathlib import Path
 from typing import Optional
 
 import torch
@@ -19,10 +17,11 @@ class BertClassifierWithPooling(BertClassifier):
         params: dict,
         tokenizer: Optional[AutoTokenizer] = None,
         neural_network: Optional[Module] = None,
+        pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
-        super().__init__(params, tokenizer, neural_network, device, many_gpus)
+        super().__init__(params, tokenizer, neural_network, pretrained_model_name_or_path, device, many_gpus)
         self.text_split_params = TextSplitParams(
             size=params["size"], step=params["step"], minimal_length=params["minimal_length"]
         )
@@ -74,25 +73,17 @@ class BertClassifierWithPooling(BertClassifier):
 
         return pooled_preds
 
-    def save(self, model_dir: str) -> None:
-        model_dir = Path(model_dir)
-        model_dir.mkdir(parents=True, exist_ok=True)
-        with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
-            json.dump(self.params, file)
-        self.tokenizer.save_pretrained(model_dir)
-        if self.many_gpus:
-            torch.save(self.neural_network.module, model_dir / "model.bin")
-        else:
-            torch.save(self.neural_network, model_dir / "model.bin")
-
     @classmethod
     def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifierWithPooling:
-        model_dir = Path(model_dir)
-        with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
-            params = json.load(file)
-        tokenizer = AutoTokenizer.from_pretrained(model_dir)
-        neural_network = torch.load(f=model_dir / "model.bin", map_location=device)
-        return cls(params, tokenizer, neural_network, device, many_gpus)
+        model = super().load(model_dir, device, many_gpus)
+        return cls(
+            params=model.params,
+            tokenizer=model.tokenizer,
+            neural_network=model.neural_network,
+            pretrained_model_name_or_path=None,
+            device=model.device,
+            many_gpus=model.many_gpus,
+        )
 
 
 def collate_fn_pooled_tokens(data):

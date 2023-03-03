@@ -11,13 +11,11 @@ More technical details are described in a [document](docs/bert_for_longer_texts.
 The project requires Python 3.9+ to run. Because of the size of BERT model, it is recommended to train it on GPU. Hence it is necessary to install `torch` version compatible with the machine. Other libraries are installed from the `requirements.txt` file. More detailed instruction can be found in [Environment setup](docs/setup_env.md).
 
 ## Loading the pretrained model
-
-As a default the standard english `bert-base-uncased` model is used as a pretrained model.
-
-It is possible to use custom models for other languages. Below we describe how to do this for polish roberta model:
-
-- In the first step we need to download the BERT model pretrained on corpora of texts in a given language.
-- For polish it is the file ```roberta_base_transformers.zip``` from  [here](https://github.com/sdadas/polish-roberta/releases). After download, unzip files and copy the path to the config file ```.env``` eg. ```MODEL_PATH = "../resources/roberta"``` and set `MODEL_LOAD_FROM_FILE = "True"`.
+ 
+As a default the standard english `bert-base-uncased` model is used as a pretrained model. However, it is possible to use any Bert or Roberta model. To do this, use the parameter `pretrained_model_name_or_path`.
+It can be either:
+- a string with name of a pre-trained model configuartion to download from huggingface library, e.g.: `roberta-base`.
+- a path to a directory with the downloaded model, e.g.: `./my_model_directory/`.
 
 ## Tests
 To make sure that everything works properly, run the command ```pytest tests -rA```. As a default during tests models are trained on small samples on CPU.

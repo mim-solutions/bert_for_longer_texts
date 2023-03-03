@@ -1,18 +1,15 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
-import os
+import json
 from pathlib import Path
+from typing import Any, Optional, Union
 
-from dotenv import load_dotenv
 import torch
 from torch import Tensor
 from torch.nn import BCELoss, DataParallel, Module, Linear, Sigmoid
 from torch.optim import AdamW, Optimizer
 from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
-from transformers import AutoModel, AutoTokenizer, BatchEncoding
-
-load_dotenv()
+from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, RobertaModel
 
 
 class BertClassifier(ABC):
@@ -22,13 +19,14 @@ class BertClassifier(ABC):
         params: dict,
         tokenizer: Optional[AutoTokenizer] = None,
         neural_network: Optional[Module] = None,
+        pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
         if not tokenizer:
-            tokenizer = load_tokenizer()
+            tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         if not neural_network:
-            bert = load_bert()
+            bert = AutoModel.from_pretrained(pretrained_model_name_or_path)
             neural_network = BertClassifierNN(bert)
 
         self.params = params
@@ -109,9 +107,36 @@ class BertClassifier(ABC):
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
         pass
 
+    def save(self, model_dir: str) -> None:
+        model_dir = Path(model_dir)
+        model_dir.mkdir(parents=True, exist_ok=True)
+        with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
+            json.dump(self.params, file)
+        self.tokenizer.save_pretrained(model_dir)
+        if self.many_gpus:
+            torch.save(self.neural_network.module, model_dir / "model.bin")
+        else:
+            torch.save(self.neural_network, model_dir / "model.bin")
+
+    @classmethod
+    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifier:
+        model_dir = Path(model_dir)
+        with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
+            params = json.load(file)
+        tokenizer = AutoTokenizer.from_pretrained(model_dir)
+        neural_network = torch.load(f=model_dir / "model.bin", map_location=device)
+        return cls(
+            params=params,
+            tokenizer=tokenizer,
+            neural_network=neural_network,
+            pretrained_model_name_or_path=None,
+            device=device,
+            many_gpus=many_gpus,
+        )
+
 
 class BertClassifierNN(Module):
-    def __init__(self, model: AutoModel):
+    def __init__(self, model: Union[BertModel, RobertaModel]):
         super().__init__()
         self.model = model
 
@@ -144,23 +169,3 @@ class TokenizedDataset(Dataset):
         if self.labels:
             return self.input_ids[idx], self.attention_mask[idx], self.labels[idx]
         return self.input_ids[idx], self.attention_mask[idx]
-
-
-def load_tokenizer() -> AutoTokenizer:
-    MODEL_LOAD_FROM_FILE = os.environ["MODEL_LOAD_FROM_FILE"] == "True"
-    if MODEL_LOAD_FROM_FILE:
-        MODEL_PATH = Path(os.environ["MODEL_PATH"])
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    else:
-        tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    return tokenizer
-
-
-def load_bert() -> AutoModel:
-    MODEL_LOAD_FROM_FILE = os.environ["MODEL_LOAD_FROM_FILE"] == "True"
-    if MODEL_LOAD_FROM_FILE:
-        MODEL_PATH = Path(os.environ["MODEL_PATH"])
-        model = AutoModel.from_pretrained(MODEL_PATH)
-    else:
-        model = AutoModel.from_pretrained("bert-base-uncased")
-    return model
