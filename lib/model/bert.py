@@ -12,12 +12,10 @@ from torch.optim import AdamW, Optimizer
 from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
 from transformers import AutoModel, AutoTokenizer, BatchEncoding
 
-from lib.model.base import Model
-
 load_dotenv()
 
 
-class BertClassifier(Model, ABC):
+class BertClassifier(ABC):
     @abstractmethod
     def __init__(
         self,
