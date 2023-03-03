@@ -57,10 +57,12 @@ def add_special_tokens_at_beginning_and_end(input_id_chunks: list[Tensor], mask_
     """
     Adds special CLS token (token id = 101) at the beginning
     Adds SEP token (token id = 102) at the end of each chunk
+    Adds corresponding attention masks equal to 1 (attention mask is boolean)
     """
     for i in range(len(input_id_chunks)):
         # adding CLS (token id 101) and SEP (token id 102) tokens
         input_id_chunks[i] = torch.cat([Tensor([101]), input_id_chunks[i], Tensor([102])])
+        # adding attention masks  corresponding to special tokens
         mask_chunks[i] = torch.cat([Tensor([1]), mask_chunks[i], Tensor([1])])
 
 
