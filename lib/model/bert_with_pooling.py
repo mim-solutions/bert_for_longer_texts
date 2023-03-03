@@ -25,7 +25,7 @@ class BertClassifierWithPooling(BertClassifier):
         self.text_split_params = TextSplitParams(
             size=params["size"], step=params["step"], minimal_length=params["minimal_length"]
         )
-        self.collate_fn = collate_fn_pooled_tokens
+        self.collate_fn = self.collate_fn_pooled_tokens
         self.pooling_strategy = params["pooling_strategy"]
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
@@ -100,13 +100,12 @@ class BertClassifierWithPooling(BertClassifier):
             many_gpus=model.many_gpus,
         )
 
-
-def collate_fn_pooled_tokens(data):
-    input_ids = [data[i][0] for i in range(len(data))]
-    attention_mask = [data[i][1] for i in range(len(data))]
-    if len(data[0]) == 2:
-        collated = [input_ids, attention_mask]
-    else:
-        labels = Tensor([data[i][2] for i in range(len(data))])
-        collated = [input_ids, attention_mask, labels]
-    return collated
+    def collate_fn_pooled_tokens(self, data):
+        input_ids = [data[i][0] for i in range(len(data))]
+        attention_mask = [data[i][1] for i in range(len(data))]
+        if len(data[0]) == 2:
+            collated = [input_ids, attention_mask]
+        else:
+            labels = Tensor([data[i][2] for i in range(len(data))])
+            collated = [input_ids, attention_mask, labels]
+        return collated
