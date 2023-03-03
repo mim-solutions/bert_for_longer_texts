@@ -86,9 +86,9 @@ def stack_tokens_from_all_chunks(input_id_chunks: list[Tensor], mask_chunks: lis
     return input_ids.long(), attention_mask.int()
 
 
-def split_overlapping(array: list[T], text_split_params) -> list[list[T]]:
-    """Helper function for dividing arrays into overlapping chunks"""
-    result = [array[i : i + text_split_params.size] for i in range(0, len(array), text_split_params.step)]
+def split_overlapping(tensor: Tensor, text_split_params) -> list[Tensor]:
+    """Helper function for dividing 1-dimensional tensors into overlapping chunks"""
+    result = [tensor[i : i + text_split_params.size] for i in range(0, len(tensor), text_split_params.step)]
     if len(result) > 1:
         # ignore chunks with less than minimal_length number of tokens
         result = [x for x in result if len(x) >= text_split_params.minimal_length]
