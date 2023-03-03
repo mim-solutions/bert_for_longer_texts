@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 from transformers import AutoTokenizer, BatchEncoding
 
+from lib.entities.exceptions import InconsinstentSplitingParamsException
 from lib.entities.text_split_params import TextSplitParams
 
 T = TypeVar("T")
@@ -90,3 +91,14 @@ def split_overlapping(array: list[T], text_split_params) -> list[list[T]]:
         # ignore chunks with less then minimal_length number of tokens
         result = [x for x in result if len(x) >= text_split_params.minimal_length]
     return result
+
+
+def check_split_parameters_consistency(text_split_params: TextSplitParams) -> None:
+    if text_split_params.size > 510:
+        raise InconsinstentSplitingParamsException("Size of each chunk cannot be bigger than 510!")
+    if text_split_params.minimal_length > text_split_params.size:
+        raise InconsinstentSplitingParamsException("Minimal length cannot be bigger than size!")
+    if text_split_params.step > text_split_params.size:
+        raise InconsinstentSplitingParamsException(
+            "Step cannot be bigger than size! Chunks must overlap or be near each other!"
+        )

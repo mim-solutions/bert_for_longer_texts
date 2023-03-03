@@ -1,0 +1,2 @@
+class InconsinstentSplitingParamsException(Exception):
+    pass
