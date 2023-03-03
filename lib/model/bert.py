@@ -16,7 +16,9 @@ class BertClassifier(ABC):
     @abstractmethod
     def __init__(
         self,
-        params: dict,
+        batch_size: int,
+        learning_rate: float,
+        epochs: int,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
@@ -29,7 +31,9 @@ class BertClassifier(ABC):
             bert = AutoModel.from_pretrained(pretrained_model_name_or_path)
             neural_network = BertClassifierNN(bert)
 
-        self.params = params
+        self.batch_size = batch_size
+        self.learning_rate = learning_rate
+        self.epochs = epochs
         self.device = device
         self.many_gpus = many_gpus
         self.tokenizer = tokenizer
@@ -42,34 +46,34 @@ class BertClassifier(ABC):
 
     def fit(self, x_train: list[str], y_train: list[bool], epochs: Optional[int] = None) -> None:
         if not epochs:
-            epochs = self.params["epochs"]
-        optimizer = AdamW(self.neural_network.parameters(), lr=self.params["learning_rate"])
+            epochs = self.epochs
+        optimizer = AdamW(self.neural_network.parameters(), lr=self.learning_rate)
 
         tokens = self._tokenize(x_train)
         dataset = TokenizedDataset(tokens, y_train)
         dataloader = DataLoader(
-            dataset, sampler=RandomSampler(dataset), batch_size=self.params["batch_size"], collate_fn=self.collate_fn
+            dataset, sampler=RandomSampler(dataset), batch_size=self.batch_size, collate_fn=self.collate_fn
         )
         for epoch in range(epochs):
             self._train_single_epoch(dataloader, optimizer)
 
     def predict(self, x: list[str], batch_size: Optional[int] = None) -> list[tuple[bool, float]]:
         if not batch_size:
-            batch_size = self.params["batch_size"]
+            batch_size = self.batch_size
         scores = self.predict_scores(x, batch_size)
         classes = [i >= 0.5 for i in scores]
         return list(zip(classes, scores))
 
     def predict_classes(self, x: list[str], batch_size: Optional[int] = None) -> list[bool]:
         if not batch_size:
-            batch_size = self.params["batch_size"]
+            batch_size = self.batch_size
         scores = self.predict_scores(x, batch_size)
         classes = [i >= 0.5 for i in scores]
         return classes
 
     def predict_scores(self, x: list[str], batch_size: Optional[int] = None) -> list[float]:
         if not batch_size:
-            batch_size = self.params["batch_size"]
+            batch_size = self.batch_size
         tokens = self._tokenize(x)
         dataset = TokenizedDataset(tokens)
         dataloader = DataLoader(
@@ -110,8 +114,9 @@ class BertClassifier(ABC):
     def save(self, model_dir: str) -> None:
         model_dir = Path(model_dir)
         model_dir.mkdir(parents=True, exist_ok=True)
+        params = {"batch_size": self.batch_size, "learning_rate": self.learning_rate, "epochs": self.epochs}
         with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
-            json.dump(self.params, file)
+            json.dump(params, file)
         self.tokenizer.save_pretrained(model_dir)
         if self.many_gpus:
             torch.save(self.neural_network.module, model_dir / "model.bin")
@@ -126,7 +131,7 @@ class BertClassifier(ABC):
         tokenizer = AutoTokenizer.from_pretrained(model_dir)
         neural_network = torch.load(f=model_dir / "model.bin", map_location=device)
         return cls(
-            params=params,
+            **params,
             tokenizer=tokenizer,
             neural_network=neural_network,
             pretrained_model_name_or_path=None,

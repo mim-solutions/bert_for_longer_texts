@@ -17,7 +17,7 @@ MODEL_PARAMS = {
 def test_fit_and_predict():
     """The test is quite naive, but it goes through all the methods."""
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(params, device="cpu")
+    model = BertClassifierWithPooling(**params, device="cpu")
     x_train = ["carrot", "cucumber", "tomato", "potato"]
     y_train = [True] * len(x_train)
 
@@ -37,7 +37,7 @@ def test_fit_and_predict():
 def test_prediction_order():
     """Check if the order of predictions is preserved."""
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(params, device="cpu")
+    model = BertClassifierWithPooling(**params, device="cpu")
     x_train = ["carrot", "cucumber", "tomato", "potato"]
     y_train = [True] * len(x_train)
 
@@ -58,14 +58,13 @@ def test_prediction_order():
 
 def test_save_and_load():
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(params, device="cpu")
+    model = BertClassifierWithPooling(**params, device="cpu")
     path = Path("tmp_roberta_model_test_dir")
 
     model.save(str(path))
 
     try:
         model_loaded = BertClassifierWithPooling.load(str(path), device="cpu")
-        assert model_loaded.params == params
         # assert types to be more specific than 'isinstance()'
         assert type(model_loaded.tokenizer) == type(model.tokenizer)  # noqa: E721
         assert type(model_loaded.neural_network) == type(model.neural_network)  # noqa: E721

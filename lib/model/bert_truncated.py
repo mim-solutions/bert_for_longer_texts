@@ -11,14 +11,25 @@ from lib.model.bert import BertClassifier
 class BertClassifierTruncated(BertClassifier):
     def __init__(
         self,
-        params: dict,
+        batch_size: int,
+        learning_rate: float,
+        epochs: int,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
-        super().__init__(params, tokenizer, neural_network, pretrained_model_name_or_path, device, many_gpus)
+        super().__init__(
+            batch_size,
+            learning_rate,
+            epochs,
+            tokenizer,
+            neural_network,
+            pretrained_model_name_or_path,
+            device,
+            many_gpus,
+        )
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
@@ -42,15 +53,3 @@ class BertClassifierTruncated(BertClassifier):
         predictions = self.neural_network(*model_input)
         predictions = torch.flatten(predictions).cpu()
         return predictions
-
-    @classmethod
-    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifierTruncated:
-        model = super().load(model_dir, device, many_gpus)
-        return cls(
-            params=model.params,
-            tokenizer=model.tokenizer,
-            neural_network=model.neural_network,
-            pretrained_model_name_or_path=None,
-            device=model.device,
-            many_gpus=model.many_gpus,
-        )
