@@ -1,5 +1,3 @@
-from typing import TypeVar
-
 import torch
 from torch import Tensor
 from transformers import AutoTokenizer, BatchEncoding
@@ -7,7 +5,6 @@ from transformers import AutoTokenizer, BatchEncoding
 from lib.entities.exceptions import InconsinstentSplitingParamsException
 from lib.entities.text_split_params import TextSplitParams
 
-T = TypeVar("T")
 
 # Functions for preparing input for longer texts - based on
 # https://www.kdnuggets.com/2021/04/apply-transformers-any-length-text.html
