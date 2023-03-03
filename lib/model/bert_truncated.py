@@ -32,9 +32,7 @@ class BertClassifierTruncated(BertClassifier):
         If the text is longer than 512 tokens - the rest of it is ignored.
         If the text is shorter than 512 tokens - it is padded to have exactly 512 tokens.
         """
-        tokens = self.tokenizer.batch_encode_plus(
-            texts, max_length=512, padding=True, truncation=True, return_tensors="pt"
-        )
+        tokens = self.tokenizer(texts, max_length=512, padding=True, truncation=True, return_tensors="pt")
         return tokens
 
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:

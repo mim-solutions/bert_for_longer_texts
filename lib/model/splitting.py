@@ -27,7 +27,7 @@ def transform_single_text(
     text: str, tokenizer: AutoTokenizer, text_split_params: TextSplitParams
 ) -> tuple[Tensor, Tensor]:
     """Transforms the entire text to model input of BERT model"""
-    tokens = tokenize_all_text(text, tokenizer)
+    tokens = tokenize_whole_text(text, tokenizer)
     input_id_chunks, mask_chunks = split_tokens_into_smaller_chunks(tokens, text_split_params)
     add_special_tokens_at_beginning_and_end(input_id_chunks, mask_chunks)
     add_padding_tokens(input_id_chunks, mask_chunks)
@@ -35,11 +35,11 @@ def transform_single_text(
     return input_ids, attention_mask
 
 
-def tokenize_all_text(text: str, tokenizer: AutoTokenizer) -> BatchEncoding:
+def tokenize_whole_text(text: str, tokenizer: AutoTokenizer) -> BatchEncoding:
     """
     Tokenizes the entire text without truncation and without special tokens
     """
-    tokens = tokenizer.encode_plus(text, add_special_tokens=False, return_tensors="pt")
+    tokens = tokenizer(text, add_special_tokens=False, return_tensors="pt")
     return tokens
 
 
