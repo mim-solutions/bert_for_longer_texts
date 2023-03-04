@@ -25,6 +25,7 @@ class BertClassifier(ABC):
     - as default it will use all of them.
     To use only selected GPUs - set the environmental variable CUDA_VISIBLE_DEVICES
     """
+
     @abstractmethod
     def __init__(
         self,

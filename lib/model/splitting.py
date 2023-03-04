@@ -105,6 +105,7 @@ def stack_tokens_from_all_chunks(input_id_chunks: list[Tensor], mask_chunks: lis
 
 def split_overlapping(tensor: Tensor, text_split_params: TextSplitParams) -> list[Tensor]:
     """Helper function for dividing 1-dimensional tensors into overlapping chunks"""
+    check_split_parameters_consistency(text_split_params)
     result = [tensor[i : i + text_split_params.chunk_size] for i in range(0, len(tensor), text_split_params.stride)]
     if len(result) > 1:
         # ignore chunks with less than minimal_length number of tokens
