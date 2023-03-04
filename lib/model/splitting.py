@@ -1,5 +1,4 @@
 from typing import Optional
-import warnings
 
 import torch
 from torch import Tensor
@@ -48,9 +47,7 @@ def tokenize_whole_text(text: str, tokenizer: PreTrainedTokenizerBase) -> BatchE
     """
     Tokenizes the entire text without truncation and without special tokens
     """
-    with warnings.catch_warnings():  # catch the warning about using tokenizing too long text
-        warnings.simplefilter("ignore")
-        tokens = tokenizer(text, add_special_tokens=False, truncation=False, return_tensors="pt")
+    tokens = tokenizer(text, add_special_tokens=False, truncation=False, return_tensors="pt")
     return tokens
 
 
