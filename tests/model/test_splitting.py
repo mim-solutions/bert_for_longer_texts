@@ -1,10 +1,11 @@
 from lib.entities.exceptions import InconsinstentSplitingParamsException
 
 import pytest
-from torch import equal, Tensor
+from torch import Tensor
 
 from lib.entities.text_split_params import TextSplitParams
 from lib.model.splitting import split_overlapping
+from lib.model.tensor_utils import list_of_tensors_deep_equal
 
 EXAMPLE_TENSOR = Tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
@@ -75,12 +76,3 @@ def test_minimal_length_larger_than_chunk_size_exception():
 
     with pytest.raises(InconsinstentSplitingParamsException):
         split_overlapping(EXAMPLE_TENSOR, spliting_params)
-
-
-def list_of_tensors_deep_equal(list_1: list[Tensor], list_2: list[Tensor]) -> bool:
-    if len(list_1) != len(list_2):
-        return False
-    for x, y in zip(list_1, list_2):
-        if not equal(x, y):
-            return False
-    return True
