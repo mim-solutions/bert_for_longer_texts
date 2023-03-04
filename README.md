@@ -34,3 +34,10 @@ The main methods are:
 ## Examples
 - [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
 - [fit and predict method for model with pooling](notebooks/example_model_with_pooling_fit_predict.ipynb)
+
+## Contributors
+The project was created at [MIM AI](https://www.mim.ai/) by:
+- [Michał Brzozowski](https://github.com/MichalBrzozowski91) 
+- [Marek Wachnicki](https://github.com/mwachnicki)
+
+All contributions, and ideas are welcome. Feel free to report any [issue](https://github.com/mim-solutions/bert_for_longer_texts/issues) or suggest a [pull request](https://github.com/mim-solutions/bert_for_longer_texts/pulls).
