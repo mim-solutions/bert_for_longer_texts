@@ -1,8 +1,9 @@
 from typing import Optional
+import warnings
 
 import torch
 from torch import Tensor
-from transformers import AutoTokenizer, BatchEncoding
+from transformers import BatchEncoding, PreTrainedTokenizerBase
 
 from lib.entities.exceptions import InconsinstentSplitingParamsException
 from lib.entities.text_split_params import TextSplitParams
@@ -14,7 +15,7 @@ from lib.entities.text_split_params import TextSplitParams
 
 def transform_list_of_texts(
     texts: list[str],
-    tokenizer: AutoTokenizer,
+    tokenizer: PreTrainedTokenizerBase,
     text_split_params: TextSplitParams,
     maximal_text_length: Optional[int] = None,
 ) -> BatchEncoding:
@@ -27,7 +28,7 @@ def transform_list_of_texts(
 
 def transform_single_text(
     text: str,
-    tokenizer: AutoTokenizer,
+    tokenizer: PreTrainedTokenizerBase,
     text_split_params: TextSplitParams,
     maximal_text_length: Optional[int],
 ) -> tuple[Tensor, Tensor]:
@@ -43,15 +44,19 @@ def transform_single_text(
     return input_ids, attention_mask
 
 
-def tokenize_whole_text(text: str, tokenizer: AutoTokenizer) -> BatchEncoding:
+def tokenize_whole_text(text: str, tokenizer: PreTrainedTokenizerBase) -> BatchEncoding:
     """
     Tokenizes the entire text without truncation and without special tokens
     """
-    tokens = tokenizer(text, add_special_tokens=False, truncation=False, return_tensors="pt")
+    with warnings.catch_warnings():  # catch the warning about using tokenizing too long text
+        warnings.simplefilter("ignore")
+        tokens = tokenizer(text, add_special_tokens=False, truncation=False, return_tensors="pt")
     return tokens
 
 
-def tokenize_text_with_truncation(text: str, tokenizer: AutoTokenizer, maximal_text_length: int) -> BatchEncoding:
+def tokenize_text_with_truncation(
+    text: str, tokenizer: PreTrainedTokenizerBase, maximal_text_length: int
+) -> BatchEncoding:
     """
     Tokenizes the text with truncation to maximal_text_length and without special tokens
     """
