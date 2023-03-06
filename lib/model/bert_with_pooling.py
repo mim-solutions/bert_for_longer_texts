@@ -8,7 +8,6 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from lib.entities.text_split_params import TextSplitParams
 from lib.model.bert import BertClassifier
 from lib.model.splitting import transform_list_of_texts
 
@@ -66,7 +65,6 @@ class BertClassifierWithPooling(BertClassifier):
         self.maximal_text_length = maximal_text_length
 
         self.device = device
-        self.text_split_params = TextSplitParams(chunk_size, stride, minimal_chunk_length)
         self.collate_fn = self.collate_fn_pooled_tokens
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
@@ -86,7 +84,9 @@ class BertClassifierWithPooling(BertClassifier):
         These lists of tensors cannnot be stacked into one tensor,
         because each text can be divided into different number of chunks
         """
-        tokens = transform_list_of_texts(texts, self.tokenizer, self.text_split_params, self.maximal_text_length)
+        tokens = transform_list_of_texts(
+            texts, self.tokenizer, self.chunk_size, self.stride, self.minimal_chunk_length, self.maximal_text_length
+        )
         return tokens
 
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:
