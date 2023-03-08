@@ -85,7 +85,7 @@ class BertClassifierWithPooling(BertClassifier):
             K(i) is the number of chunks of the text i.
             Each element of the list is stacked Tensor for encoding of each chunk.
             Values of the tensor are booleans.
-        These lists of tensors cannnot be stacked into one tensor,
+        These lists of tensors cannot be stacked into one tensor,
         because each text can be divided into different number of chunks.
         """
         tokens = transform_list_of_texts(
