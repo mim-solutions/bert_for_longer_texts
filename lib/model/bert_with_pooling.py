@@ -65,7 +65,7 @@ class BertClassifierWithPooling(BertClassifier):
         self.maximal_text_length = maximal_text_length
 
         self.device = device
-        self.collate_fn = self.collate_fn_pooled_tokens
+        self.collate_fn = BertClassifierWithPooling.collate_fn_pooled_tokens
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
@@ -74,13 +74,10 @@ class BertClassifierWithPooling(BertClassifier):
         K(i) is the number of chunks of the text i.
         Each element of the list is stacked Tensor for encoding of each chunk.
         Values of the tensor are integers.
-        - attention_mask - List of N tensors of the size K x 512 of token ids.
+        - attention_mask - List of N tensors of the size K x 512 of attention masks.
         K(i) is the number of chunks of the text i.
         Each element of the list is stacked Tensor for encoding of each chunk.
-        This is stacked Tensor for encoding of each text.
         Values of the tensor are booleans.
-        If the text is longer than 512 tokens - the rest of it is ignored.
-        If the text is shorter than 512 tokens - it is padded to have exactly 512 tokens.
         These lists of tensors cannnot be stacked into one tensor,
         because each text can be divided into different number of chunks
         """
@@ -146,7 +143,8 @@ class BertClassifierWithPooling(BertClassifier):
         with open(file=Path(model_dir) / "params.json", mode="w", encoding="utf-8") as file:
             json.dump(params, file)
 
-    def collate_fn_pooled_tokens(self, data):
+    @staticmethod
+    def collate_fn_pooled_tokens(data):
         input_ids = [data[i][0] for i in range(len(data))]
         attention_mask = [data[i][1] for i in range(len(data))]
         if len(data[0]) == 2:
