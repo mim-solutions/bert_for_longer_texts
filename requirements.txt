@@ -126,7 +126,6 @@ tbb==2021.8.0
 terminado==0.17.1
 threadpoolctl==3.1.0
 tinycss2==1.2.1
-tokenize-rt==5.0.0
 tokenizers==0.13.2
 tomli==2.0.1
 tornado==6.2
