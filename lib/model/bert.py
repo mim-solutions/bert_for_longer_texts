@@ -47,6 +47,8 @@ class BertClassifier(ABC):
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self._params = {"batch_size": self.batch_size, "learning_rate": self.learning_rate, "epochs": self.epochs}
+
         self.device = device
         self.many_gpus = many_gpus
         self.tokenizer = tokenizer
@@ -127,9 +129,8 @@ class BertClassifier(ABC):
     def save(self, model_dir: str) -> None:
         model_dir = Path(model_dir)
         model_dir.mkdir(parents=True, exist_ok=True)
-        params = {"batch_size": self.batch_size, "learning_rate": self.learning_rate, "epochs": self.epochs}
         with open(file=model_dir / "params.json", mode="w", encoding="utf-8") as file:
-            json.dump(params, file)
+            json.dump(self._params, file)
         self.tokenizer.save_pretrained(model_dir)
         if self.many_gpus:
             torch.save(self.neural_network.module, model_dir / "model.bin")

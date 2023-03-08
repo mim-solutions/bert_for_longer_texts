@@ -1,6 +1,4 @@
 from __future__ import annotations
-import json
-from pathlib import Path
 from typing import Optional
 
 import torch
@@ -63,6 +61,15 @@ class BertClassifierWithPooling(BertClassifier):
         else:
             raise ValueError("Unknown pooling strategy!")
         self.maximal_text_length = maximal_text_length
+
+        additional_params = {
+            "chunk_size": self.chunk_size,
+            "stride": self.stride,
+            "minimal_chunk_length": self.minimal_chunk_length,
+            "pooling_strategy": self.pooling_strategy,
+            "maximal_text_length": self.maximal_text_length,
+        }
+        self._params.update(additional_params)
 
         self.device = device
         self.collate_fn = BertClassifierWithPooling.collate_fn_pooled_tokens
@@ -127,21 +134,6 @@ class BertClassifierWithPooling(BertClassifier):
             raise ValueError("Unknown pooling strategy!")
 
         return pooled_preds
-
-    def save(self, model_dir: str) -> None:
-        super().save(model_dir)
-        additional_params = {
-            "chunk_size": self.chunk_size,
-            "stride": self.stride,
-            "minimal_chunk_length": self.minimal_chunk_length,
-            "pooling_strategy": self.pooling_strategy,
-            "maximal_text_length": self.maximal_text_length,
-        }
-        with open(file=Path(model_dir) / "params.json", mode="r", encoding="utf-8") as file:
-            params = json.load(file)
-        params.update(additional_params)
-        with open(file=Path(model_dir) / "params.json", mode="w", encoding="utf-8") as file:
-            json.dump(params, file)
 
     @staticmethod
     def collate_fn_pooled_tokens(data):
