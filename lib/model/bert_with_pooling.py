@@ -15,17 +15,17 @@ from lib.model.splitting import transform_list_of_texts
 class BertClassifierWithPooling(BertClassifier):
     """
     The splitting procedure is the following:
-    - tokenize the whole text (if maximal_text_length=None) or truncate to the size maximal_text_length
-    - split the tokens to chunks of the size chunk_size
-    - tokens may overlap dependent on the parameter stride
-    - in other words: we get chunks by moving the window of the size chunk_size by the length equal to stride
-    - see the example in https://github.com/google-research/bert/issues/27#issuecomment-435265194
-    - stride has the analogous meaning here that in convolutional neural networks
-    - the chunk_size is analogous to kernel_size in CNNs
-    - we ignore chunks which are too small - smaller than minimal_chunk_length
-    After getting the tensor of predictions of all chunks we pool them into one prediction
-    Aggregation function is specified by the string parameter pooling_strategy
-    It can be either "mean" or "max"
+        - Tokenize the whole text (if maximal_text_length=None) or truncate to the size maximal_text_length.
+        - Split the tokens to chunks of the size chunk_size.
+        - Tokens may overlap dependent on the parameter stride.
+        - In other words: we get chunks by moving the window of the size chunk_size by the length equal to stride.
+        - See the example in https://github.com/google-research/bert/issues/27#issuecomment-435265194.
+        - Stride has the analogous meaning here that in convolutional neural networks.
+        - The chunk_size is analogous to kernel_size in CNNs.
+        - We ignore chunks which are too small - smaller than minimal_chunk_length.
+    After getting the tensor of predictions of all chunks we pool them into one prediction.
+    Aggregation function is specified by the string parameter pooling_strategy.
+    It can be either "mean" or "max".
     """
 
     def __init__(
@@ -70,16 +70,16 @@ class BertClassifierWithPooling(BertClassifier):
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
         Transforms list of N texts to the BatchEncoding, that is the dictionary with the following keys:
-        - input_ids - List of N tensors of the size K(i) x 512 of token ids.
-        K(i) is the number of chunks of the text i.
-        Each element of the list is stacked Tensor for encoding of each chunk.
-        Values of the tensor are integers.
-        - attention_mask - List of N tensors of the size K x 512 of attention masks.
-        K(i) is the number of chunks of the text i.
-        Each element of the list is stacked Tensor for encoding of each chunk.
-        Values of the tensor are booleans.
+            - input_ids - List of N tensors of the size K(i) x 512 of token ids.
+            K(i) is the number of chunks of the text i.
+            Each element of the list is stacked Tensor for encoding of each chunk.
+            Values of the tensor are integers.
+            - attention_mask - List of N tensors of the size K x 512 of attention masks.
+            K(i) is the number of chunks of the text i.
+            Each element of the list is stacked Tensor for encoding of each chunk.
+            Values of the tensor are booleans.
         These lists of tensors cannnot be stacked into one tensor,
-        because each text can be divided into different number of chunks
+        because each text can be divided into different number of chunks.
         """
         tokens = transform_list_of_texts(
             texts, self.tokenizer, self.chunk_size, self.stride, self.minimal_chunk_length, self.maximal_text_length
