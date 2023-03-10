@@ -1,4 +1,4 @@
-from lib.entities.exceptions import InconsinstentSplitingParamsException
+from lib.entities.exceptions import InconsistentSplittingParamsException
 
 import pytest
 from torch import Tensor
@@ -53,15 +53,15 @@ def test_split_overlapping():
 
 
 def test_too_large_chunk_exception():
-    with pytest.raises(InconsinstentSplitingParamsException):
+    with pytest.raises(InconsistentSplittingParamsException):
         split_overlapping(EXAMPLE_TENSOR, chunk_size=511, stride=2, minimal_chunk_length=1)
 
 
 def test_stride_larger_than_chunk_size_exception():
-    with pytest.raises(InconsinstentSplitingParamsException):
+    with pytest.raises(InconsistentSplittingParamsException):
         split_overlapping(EXAMPLE_TENSOR, chunk_size=3, stride=4, minimal_chunk_length=1)
 
 
 def test_minimal_length_larger_than_chunk_size_exception():
-    with pytest.raises(InconsinstentSplitingParamsException):
+    with pytest.raises(InconsistentSplittingParamsException):
         split_overlapping(EXAMPLE_TENSOR, chunk_size=3, stride=2, minimal_chunk_length=4)
