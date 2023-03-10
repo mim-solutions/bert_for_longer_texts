@@ -21,6 +21,7 @@ class BertClassifierWithPooling(BertClassifier):
         - Stride has the analogous meaning here that in convolutional neural networks.
         - The chunk_size is analogous to kernel_size in CNNs.
         - We ignore chunks which are too small - smaller than minimal_chunk_length.
+
     After getting the tensor of predictions of all chunks we pool them into one prediction.
     Aggregation function is specified by the string parameter pooling_strategy.
     It can be either "mean" or "max".
@@ -78,13 +79,14 @@ class BertClassifierWithPooling(BertClassifier):
         """
         Transforms list of N texts to the BatchEncoding, that is the dictionary with the following keys:
             - input_ids - List of N tensors of the size K(i) x 512 of token ids.
-            K(i) is the number of chunks of the text i.
-            Each element of the list is stacked Tensor for encoding of each chunk.
-            Values of the tensor are integers.
+                K(i) is the number of chunks of the text i.
+                Each element of the list is stacked Tensor for encoding of each chunk.
+                Values of the tensor are integers.
             - attention_mask - List of N tensors of the size K x 512 of attention masks.
-            K(i) is the number of chunks of the text i.
-            Each element of the list is stacked Tensor for encoding of each chunk.
-            Values of the tensor are booleans.
+                K(i) is the number of chunks of the text i.
+                Each element of the list is stacked Tensor for encoding of each chunk.
+                Values of the tensor are booleans.
+
         These lists of tensors cannot be stacked into one tensor,
         because each text can be divided into different number of chunks.
         """

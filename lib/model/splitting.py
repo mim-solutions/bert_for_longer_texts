@@ -50,9 +50,7 @@ def transform_single_text(
 
 
 def tokenize_whole_text(text: str, tokenizer: PreTrainedTokenizerBase) -> BatchEncoding:
-    """
-    Tokenizes the entire text without truncation and without special tokens.
-    """
+    """Tokenizes the entire text without truncation and without special tokens."""
     tokens = tokenizer(text, add_special_tokens=False, truncation=False, return_tensors="pt")
     return tokens
 
@@ -60,9 +58,7 @@ def tokenize_whole_text(text: str, tokenizer: PreTrainedTokenizerBase) -> BatchE
 def tokenize_text_with_truncation(
     text: str, tokenizer: PreTrainedTokenizerBase, maximal_text_length: int
 ) -> BatchEncoding:
-    """
-    Tokenizes the text with truncation to maximal_text_length and without special tokens.
-    """
+    """Tokenizes the text with truncation to maximal_text_length and without special tokens."""
     tokens = tokenizer(
         text, add_special_tokens=False, max_length=maximal_text_length, truncation=True, return_tensors="pt"
     )

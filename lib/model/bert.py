@@ -23,6 +23,7 @@ class BertClassifier(ABC):
         - Set device to "cuda".
         - Set many_gpu flag to True.
         - As default it will use all of them.
+
     To use only selected GPUs - set the environmental variable CUDA_VISIBLE_DEVICES.
     """
 

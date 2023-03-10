@@ -35,11 +35,12 @@ class BertClassifierTruncated(BertClassifier):
         """
         Transforms list of N texts to the BatchEncoding, that is the dictionary with the following keys:
             - input_ids - Tensor of the size N x 512 of token ids.
-            This is stacked Tensor of encodings of each text.
-            Values of the tensor are integers.
+                This is stacked Tensor of encodings of each text.
+                Values of the tensor are integers.
             - attention_mask - Tensor of the size N x 512 of attention masks.
-            This is stacked Tensor of encodings of each text.
-            Values of the tensor are booleans.
+                This is stacked Tensor of encodings of each text.
+                Values of the tensor are booleans.
+
         If the text is longer than 512 tokens - the rest of it is ignored.
         If the text is shorter than 512 tokens - it is padded to have exactly 512 tokens.
         """
