@@ -1,8 +1,7 @@
-from lib.entities.exceptions import InconsistentSplittingParamsException
-
 import pytest
 from torch import Tensor
 
+from lib.entities.exceptions import InconsistentSplittingParamsException
 from lib.model.splitting import split_overlapping
 from lib.model.tensor_utils import list_of_tensors_deep_equal
 
