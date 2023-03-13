@@ -82,7 +82,7 @@ class BertClassifierWithPooling(BertClassifier):
                 K(i) is the number of chunks of the text i.
                 Each element of the list is stacked Tensor for encoding of each chunk.
                 Values of the tensor are integers.
-            - attention_mask - List of N tensors of the size K x 512 of attention masks.
+            - attention_mask - List of N tensors of the size K(i) x 512 of attention masks.
                 K(i) is the number of chunks of the text i.
                 Each element of the list is stacked Tensor for encoding of each chunk.
                 Values of the tensor are booleans.
