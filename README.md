@@ -41,3 +41,6 @@ The project was created at [MIM AI](https://www.mim.ai/) by:
 - [Marek Wachnicki](https://github.com/mwachnicki)
 
 All contributions, and ideas are welcome. Feel free to report any [issue](https://github.com/mim-solutions/bert_for_longer_texts/issues) or suggest a [pull request](https://github.com/mim-solutions/bert_for_longer_texts/pulls).
+
+## License
+See the [LICENSE](LICENSE.txt) file for license rights and limitations (MIT).
