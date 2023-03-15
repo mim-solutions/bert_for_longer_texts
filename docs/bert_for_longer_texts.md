@@ -19,7 +19,7 @@ They are used in the following way:
 - More examples of splitting with different sets of parameters are in [test_splitting](../tests/model/test_splitting.py).
 - The string parameter `pooling_strategy` is used at the end to aggregate the model results. It can be either `mean` or `max`.
 
-### 1. Preparing the single text
+### 1. Preparing a single text
 We follow [this instruction](https://www.kdnuggets.com/2021/04/apply-transformers-any-length-text.html). The main difference is that we allow the text chunks to overlap.
 - Tokenize the whole text (if `maximal_text_length=None`) or truncate to the size `maximal_text_length`.
 - Split the tokens into chunks based on the model hyperparameters `chunk_size`, `stride`, and `minimal_chunk_length`.
