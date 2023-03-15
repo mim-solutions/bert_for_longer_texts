@@ -9,7 +9,7 @@ Method to overcome this issue was proposed by Devlin (one of the authors of BERT
 The procedure of splitting and pooling is determined by the hyperparameters of the class `BertClassifierWithPooling`. These are `maximal_text_length`, `chunk_size`, `stride`, `minimal_chunk_length`,  and `pooling_strategy`.
 They are used in the following way:
 - The parameter `maximal_text_length` is used to truncate the tokens. It can be either `None`, which means no truncation, or an integer, determining the number of tokens to consider. Standard BERT truncates to $510$ tokens because it needs $2$ additional tokens at the beginning and the end.
-- The integer parameter `chunk_size` determines the size (in number of tokens) of each chunk. This parameter cannot be set larger than $510$. Otherwise, we will not be able to fit the chunk into the input of BERT.
+- The integer parameter `chunk_size` determines the size (in number of tokens) of each chunk. This parameter cannot be larger than $510$. Otherwise, we will not be able to fit the chunk into the input of BERT.
 - Tokens may overlap depending on the parameter `stride`.
 - In other words: we get chunks by moving the window of the size `chunk_size` by the length equal to `stride`. Stride cannot be bigger than chunk size. Chunks must overlap or be near each other.
 - Stride has the analogous meaning here to that in [convolutional neural networks](https://deepai.org/machine-learning-glossary-and-terms/stride).
