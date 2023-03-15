@@ -71,7 +71,7 @@ def split_tokens_into_smaller_chunks(
     stride: int,
     minimal_chunk_length: int,
 ) -> tuple[list[Tensor], list[Tensor]]:
-    """Splits tokens into overlapping chunks with given size and step."""
+    """Splits tokens into overlapping chunks with given size and stride."""
     input_id_chunks = split_overlapping(tokens["input_ids"][0], chunk_size, stride, minimal_chunk_length)
     mask_chunks = split_overlapping(tokens["attention_mask"][0], chunk_size, stride, minimal_chunk_length)
     return input_id_chunks, mask_chunks
@@ -127,5 +127,5 @@ def check_split_parameters_consistency(chunk_size: int, stride: int, minimal_chu
         raise InconsistentSplittingParamsException("Minimal length cannot be bigger than size!")
     if stride > chunk_size:
         raise InconsistentSplittingParamsException(
-            "Step cannot be bigger than size! Chunks must overlap or be near each other!"
+            "Stride cannot be bigger than size! Chunks must overlap or be near each other!"
         )
