@@ -1,10 +1,21 @@
-# BERT For Longer Texts
+# **BELT** (**BE**RT For **L**onger **T**exts)
 
 ## Project description and motivation
 
-The BERT model can process texts of the maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27). Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194). The main goal of our project is to implement this method and allow the BERT model to process longer texts during prediction and fine-tuning.
+### The BELT approach
+
+The BERT model can process texts of the maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27). Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194). The main goal of our project is to implement this method and allow the BERT model to process longer texts during prediction and fine-tuning. We dub this approach BELT (**BE**RT For **L**onger **T**exts).
 
 More technical details are described in a [document](docs/bert_for_longer_texts.md).
+
+### Attention is all you need, but 512 words is all you have
+
+The limitations of the BERT model to the $512$ tokens come from the very beginning of the transformers models. Indeed, the attention mechanism, invented in the groundbreaking 2017 paper [Attention is all you need](https://arxiv.org/abs/1706.03762), scales quadratically with the sequence length. Unlike RNN or CNN models, which can process sequences of arbitrary length, transformers with full attention (like BERT) are infeasible (or very expensive) to process long sequences.
+To overcome the issue, alternative approaches with sparse attention mechanisms were proposed:
+
+### BELT vs. BigBird vs. LongFormer
+
+...
 
 ## Installation and dependencies
 
