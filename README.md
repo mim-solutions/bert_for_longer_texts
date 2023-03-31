@@ -17,7 +17,7 @@ To overcome the issue, alternative approaches with sparse attention mechanisms w
 
 Let us now clarify the key differences between the BELT approach to fine-tuning and the sparse attention models BigBird and Longformer:
 - The main difference is that BigBird and Longformers are not modified BERTs. They are models with different architectures. Hence, they need to be pre-trained from scratch or downloaded.
-- This lead to the main advantage of the BELT approach - it uses any pre-trained BERT or RoBERTa models. A quick look at the HuggingFace Hub confirms that there are about 100 times more resources for [BERT](https://huggingface.co/models?other=bert) than for [Longformer](https://huggingface.co/models?other=longformer). It might be easier to find the one appropriate for the specific task or language.
+- This leads to the main advantage of the BELT approach - it uses any pre-trained BERT or RoBERTa models. A quick look at the HuggingFace Hub confirms that there are about 100 times more resources for [BERT](https://huggingface.co/models?other=bert) than for [Longformer](https://huggingface.co/models?other=longformer). It might be easier to find the one appropriate for the specific task or language.
 - On the other hand, we have not done any benchmark tests yet. We believe that the comparison of the BELT approach with the models with sparse attention might be very instructive. Some work in this direction was done in the 2022 paper [Extend and Explain: Interpreting Very Long Language Models](https://proceedings.mlr.press/v193/stremmel22a/stremmel22a.pdf). The authors cited our implementation under the former name `roberta_for_longer_texts`. We encourage more research in this direction.
 
 ## Installation and dependencies
