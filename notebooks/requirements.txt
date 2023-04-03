@@ -1,0 +1,3 @@
+ipykernel
+pandas
+scikit-learn

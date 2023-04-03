@@ -16,8 +16,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    # for running tests install also pytest and pandas
-    # for running notebooks install also ipykernel and scikit-learn
+    "torch",
     "transformers",
 ]
 
