@@ -1,7 +1,7 @@
 from pathlib import Path
 from shutil import rmtree
 
-from lib.model.bert_with_pooling import BertClassifierWithPooling
+from belt_nlp.model.bert_with_pooling import BertClassifierWithPooling
 
 MODEL_PARAMS = {
     "batch_size": 1,
