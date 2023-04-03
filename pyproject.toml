@@ -1,3 +1,37 @@
+
+[project]
+name = "belt_nlp"
+version = "0.0.1"
+authors = [
+  { name="Michał Brzozowski", email="michal.brzozowski@mim.ai" },
+  { name="Marek Wachnicki", email="marek.wachnicki@mim.ai" },
+]
+description = "BERT classification model for processing texts longer than 512 tokens."
+keywords = ["nlp", "natural-language-processing", "text-classification", "transformers", "transfer-learning", "bert"]
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    # for running tests install also pytest and pandas
+    # for running notebooks install also ipykernel and scikit-learn
+    "transformers",
+]
+
+[tool.setuptools]
+packages = [
+    "belt_nlp",
+    "belt_nlp.entities",
+    "belt_nlp.model",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mim-solutions/bert_for_longer_texts"
+"Bug Tracker" = "https://github.com/mim-solutions/bert_for_longer_texts/issues"
+
 [tool.black]
 line-length = 120
 exclude = '''
