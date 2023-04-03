@@ -22,7 +22,16 @@ Let us now clarify the key differences between the BELT approach to fine-tuning 
 
 ## Installation and dependencies
 
-The project requires Python 3.9+ to run. We recommend training the models on the GPU. Hence, it is necessary to install `torch` version compatible with the machine. Other libraries are installed from the `requirements.txt` file. More detailed instruction is in [Environment setup](docs/setup_env.md).
+The project requires Python 3.9+ to run. We recommend training the models on the GPU. Hence, it is necessary to install `torch` version compatible with the machine. The version of the driver depends on the machine - first, check the version of GPU drivers by the command `nvidia-smi` and choose the newest version compatible with these drivers according to [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (e.g.: 11.1). Then we install `torch` to get the compatible build. [Here](https://pytorch.org/get-started/previous-versions/), we find which torch version is compatible with the CUDA version on our machine.
+
+Another option is to use the CPU-only version of torch:
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+Then run
+```
+pip3 install belt-nlp
+```
 
 ## Loading the pre-trained model
  
@@ -32,6 +41,7 @@ It can be either:
 - a path to a directory with the downloaded model, e.g.: `./my_model_directory/`.
 
 ## Tests
+Additional requirements for running tests are in `tests/requirements.txt`.
 To make sure everything works properly, run the command ```pytest tests -rA```. As a default, during tests, models are trained on small samples on the CPU.
 
 ## Model classes
@@ -46,6 +56,7 @@ The main methods are:
 - `predict_scores` - calculate the list of probabilities for the given list of raw texts. The model must be fine-tuned before that.
 
 ## Examples
+Additional requirements for running notebooks are in `notebooks/requirements.txt`.
 - [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
 - [fit and predict method for model with pooling](notebooks/example_model_with_pooling_fit_predict.ipynb)
 
@@ -58,3 +69,8 @@ If you want to contribute to the library, see the [contributing info](CONTRIBUTI
 
 ## License
 See the [LICENSE](LICENSE.txt) file for license rights and limitations (MIT).
+
+## For Maintainers
+- First, increment the package version in `pyproject.toml`.
+- Then build the new version: run `python3.9 -m build` from the main folder.
+- Finally, upload to pypi: `twine upload dist/*` (two newly created files).
