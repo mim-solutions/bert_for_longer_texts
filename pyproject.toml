@@ -1,12 +1,12 @@
 
 [project]
 name = "belt_nlp"
-version = "0.0.4"
+version = "1.0.0"
 authors = [
   { name="Michał Brzozowski", email="michal.brzozowski@mim.ai" },
   { name="Marek Wachnicki", email="marek.wachnicki@mim.ai" },
 ]
-description = "BELT (BERT For Longer Texts)"
+description = "BELT (BERT For Longer Texts). BERT-based text classification model for processing texts longer than 512 tokens."
 keywords = ["nlp", "natural-language-processing", "text-classification", "transformers", "transfer-learning", "bert", "pytorch", "machine-learning", "deep-learning", "roberta"]
 readme = "README.md"
 requires-python = ">=3.9"
