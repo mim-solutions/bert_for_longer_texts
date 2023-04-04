@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from belt_nlp.entities.exceptions import InconsistentSplittingParamsException
+from belt_nlp.exceptions import InconsistentSplittingParamsException
 
 
 # Functions for preparing input for longer texts - based on

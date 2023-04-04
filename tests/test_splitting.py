@@ -1,9 +1,9 @@
 import pytest
 from torch import Tensor
 
-from belt_nlp.entities.exceptions import InconsistentSplittingParamsException
-from belt_nlp.model.splitting import split_overlapping
-from belt_nlp.model.tensor_utils import list_of_tensors_deep_equal
+from belt_nlp.exceptions import InconsistentSplittingParamsException
+from belt_nlp.splitting import split_overlapping
+from belt_nlp.tensor_utils import list_of_tensors_deep_equal
 
 EXAMPLE_TENSOR = Tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
