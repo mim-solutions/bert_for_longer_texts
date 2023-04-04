@@ -16,8 +16,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "torch",
-    "transformers",
+    "torch>=1.7.1",
+    "transformers>=4.8",
 ]
 
 [tool.setuptools]
