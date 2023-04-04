@@ -1,3 +1,0 @@
-ipykernel
-pandas
-scikit-learn

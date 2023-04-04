@@ -28,10 +28,25 @@ Another option is to use the CPU-only version of torch:
 ```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
-Then run
+Next, we recommend installing via pip:
 ```
 pip3 install belt-nlp
 ```
+
+If you want to clone the repo in order to run tests or notebooks, you can use the `requirements.txt` file.
+
+## Model classes
+
+Two main classes are implemented:
+- `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
+- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
+
+## Interface
+
+The main methods are:
+- `fit` - fine-tune the model to the training set, use the list of raw texts and labels
+- `predict_classes` - calculate the list of classifications for the given list of raw texts. The model must be fine-tuned before that.
+- `predict_scores` - calculate the list of probabilities for the given list of raw texts. The model must be fine-tuned before that.
 
 ## Loading the pre-trained model
  
@@ -41,22 +56,9 @@ It can be either:
 - a path to a directory with the downloaded model, e.g.: `./my_model_directory/`.
 
 ## Tests
-Additional requirements for running tests are in `tests/requirements.txt`.
 To make sure everything works properly, run the command ```pytest tests -rA```. As a default, during tests, models are trained on small samples on the CPU.
 
-## Model classes
-Two main classes are implemented:
-- `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
-- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
-
-## Interface
-The main methods are:
-- `fit` - fine-tune the model to the training set, use the list of raw texts and labels
-- `predict_classes` - calculate the list of classifications for the given list of raw texts. The model must be fine-tuned before that.
-- `predict_scores` - calculate the list of probabilities for the given list of raw texts. The model must be fine-tuned before that.
-
 ## Examples
-Additional requirements for running notebooks are in `notebooks/requirements.txt`.
 - [fit and predict method for base model](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_base_model_fit_predict.ipynb)
 - [fit and predict method for model with pooling](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_model_with_pooling_fit_predict.ipynb)
 
@@ -71,6 +73,14 @@ If you want to contribute to the library, see the [contributing info](https://gi
 See the [LICENSE](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/LICENSE.txt) file for license rights and limitations (MIT).
 
 ## For Maintainers
+
+File `requirements.txt` can be updated using the command:
+```
+bash pip-freeze-without-torch.sh > requirements.txt
+```
+This script saves all dependencies of the current active environment except `torch`.
+
+In order to add the next version of the package to pypi, do the following steps:
 - First, increment the package version in `pyproject.toml`.
 - Then build the new version: run `python3.9 -m build` from the main folder.
 - Finally, upload to pypi: `twine upload dist/*` (two newly created files).
