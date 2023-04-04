@@ -23,8 +23,6 @@ dependencies = [
 [tool.setuptools]
 packages = [
     "belt_nlp",
-    "belt_nlp.entities",
-    "belt_nlp.model",
 ]
 
 [project.urls]
