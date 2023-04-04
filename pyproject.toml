@@ -1,7 +1,7 @@
 
 [project]
 name = "belt_nlp"
-version = "0.0.4"
+version = "1.0.0"
 authors = [
   { name="Michał Brzozowski", email="michal.brzozowski@mim.ai" },
   { name="Marek Wachnicki", email="marek.wachnicki@mim.ai" },
