@@ -11,6 +11,7 @@ decorator==5.1.1
 exceptiongroup==1.1.1
 executing==1.2.0
 filelock==3.9.0
+flake8==6.0.0
 huggingface-hub==0.13.3
 idna==3.4
 importlib-metadata==6.1.0
@@ -19,10 +20,12 @@ ipykernel==6.22.0
 ipython==8.12.0
 jedi==0.18.2
 Jinja2==3.1.2
+joblib==1.2.0
 jupyter_client==8.1.0
 jupyter_core==5.3.0
 MarkupSafe==2.1.2
 matplotlib-inline==0.1.6
+mccabe==0.7.0
 mpmath==1.2.1
 mypy-extensions==1.0.0
 nest-asyncio==1.5.6
@@ -42,6 +45,8 @@ prompt-toolkit==3.0.38
 psutil==5.9.4
 ptyprocess==0.7.0
 pure-eval==0.2.2
+pycodestyle==2.10.0
+pyflakes==3.0.1
 Pygments==2.14.0
 pytest==7.2.2
 python-dateutil==2.8.2
@@ -50,10 +55,13 @@ PyYAML==6.0
 pyzmq==25.0.2
 regex==2023.3.23
 requests==2.28.1
+scikit-learn==1.2.2
+scipy==1.10.1
 setuptools==58.1.0
 six==1.16.0
 stack-data==0.6.2
 sympy==1.11.1
+threadpoolctl==3.1.0
 tokenize-rt==5.0.0
 tokenizers==0.13.2
 tomli==2.0.1
