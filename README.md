@@ -6,7 +6,7 @@
 
 The BERT model can process texts of the maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27). Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194). The main goal of our project is to implement this method and allow the BERT model to process longer texts during prediction and fine-tuning. We dub this approach BELT (**BE**RT For **L**onger **T**exts).
 
-More technical details are described in a [document](docs/bert_for_longer_texts.md). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
+More technical details are described in a [document](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
 
 ### Attention is all you need, but 512 words is all you have
 
@@ -47,7 +47,7 @@ To make sure everything works properly, run the command ```pytest tests -rA```. 
 ## Model classes
 Two main classes are implemented:
 - `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
-- `BertClassifierWithPooling` - extended model for longer texts ([more details here](docs/bert_for_longer_texts.md))
+- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
 
 ## Interface
 The main methods are:
@@ -57,18 +57,18 @@ The main methods are:
 
 ## Examples
 Additional requirements for running notebooks are in `notebooks/requirements.txt`.
-- [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
-- [fit and predict method for model with pooling](notebooks/example_model_with_pooling_fit_predict.ipynb)
+- [fit and predict method for base model](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_base_model_fit_predict.ipynb)
+- [fit and predict method for model with pooling](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_model_with_pooling_fit_predict.ipynb)
 
 ## Contributors
 The project was created at [MIM AI](https://www.mim.ai/) by:
 - [Michał Brzozowski](https://github.com/MichalBrzozowski91) 
 - [Marek Wachnicki](https://github.com/mwachnicki)
 
-If you want to contribute to the library, see the [contributing info](CONTRIBUTING.md).
+If you want to contribute to the library, see the [contributing info](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CONTRIBUTING.md).
 
 ## License
-See the [LICENSE](LICENSE.txt) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/LICENSE.txt) file for license rights and limitations (MIT).
 
 ## For Maintainers
 - First, increment the package version in `pyproject.toml`.
