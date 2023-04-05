@@ -6,3 +6,6 @@ __pycache__/
 .idea
 
 venv
+
+belt_nlp.egg-info
+dist
