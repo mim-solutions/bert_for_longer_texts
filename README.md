@@ -6,7 +6,7 @@
 
 The BERT model can process texts of the maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27). Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194). The main goal of our project is to implement this method and allow the BERT model to process longer texts during prediction and fine-tuning. We dub this approach BELT (**BE**RT For **L**onger **T**exts).
 
-More technical details are described in a [document](docs/bert_for_longer_texts.md). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
+More technical details are described in a [document](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
 
 ### Attention is all you need, but 512 words is all you have
 
@@ -22,7 +22,31 @@ Let us now clarify the key differences between the BELT approach to fine-tuning 
 
 ## Installation and dependencies
 
-The project requires Python 3.9+ to run. We recommend training the models on the GPU. Hence, it is necessary to install `torch` version compatible with the machine. Other libraries are installed from the `requirements.txt` file. More detailed instruction is in [Environment setup](docs/setup_env.md).
+The project requires Python 3.9+ to run. We recommend training the models on the GPU. Hence, it is necessary to install `torch` version compatible with the machine. The version of the driver depends on the machine - first, check the version of GPU drivers by the command `nvidia-smi` and choose the newest version compatible with these drivers according to [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) (e.g.: 11.1). Then we install `torch` to get the compatible build. [Here](https://pytorch.org/get-started/previous-versions/), we find which torch version is compatible with the CUDA version on our machine.
+
+Another option is to use the CPU-only version of torch:
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+Next, we recommend installing via pip:
+```
+pip3 install belt-nlp
+```
+
+If you want to clone the repo in order to run tests or notebooks, you can use the `requirements.txt` file.
+
+## Model classes
+
+Two main classes are implemented:
+- `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
+- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
+
+## Interface
+
+The main methods are:
+- `fit` - fine-tune the model to the training set, use the list of raw texts and labels
+- `predict_classes` - calculate the list of classifications for the given list of raw texts. The model must be fine-tuned before that.
+- `predict_scores` - calculate the list of probabilities for the given list of raw texts. The model must be fine-tuned before that.
 
 ## Loading the pre-trained model
  
@@ -34,27 +58,29 @@ It can be either:
 ## Tests
 To make sure everything works properly, run the command ```pytest tests -rA```. As a default, during tests, models are trained on small samples on the CPU.
 
-## Model classes
-Two main classes are implemented:
-- `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
-- `BertClassifierWithPooling` - extended model for longer texts ([more details here](docs/bert_for_longer_texts.md))
-
-## Interface
-The main methods are:
-- `fit` - fine-tune the model to the training set, use the list of raw texts and labels
-- `predict_classes` - calculate the list of classifications for the given list of raw texts. The model must be fine-tuned before that.
-- `predict_scores` - calculate the list of probabilities for the given list of raw texts. The model must be fine-tuned before that.
-
 ## Examples
-- [fit and predict method for base model](notebooks/example_base_model_fit_predict.ipynb)
-- [fit and predict method for model with pooling](notebooks/example_model_with_pooling_fit_predict.ipynb)
+- [fit and predict method for base model](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_base_model_fit_predict.ipynb)
+- [fit and predict method for model with pooling](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_model_with_pooling_fit_predict.ipynb)
 
 ## Contributors
 The project was created at [MIM AI](https://www.mim.ai/) by:
 - [Michał Brzozowski](https://github.com/MichalBrzozowski91) 
 - [Marek Wachnicki](https://github.com/mwachnicki)
 
-If you want to contribute to the library, see the [contributing info](CONTRIBUTING.md).
+If you want to contribute to the library, see the [contributing info](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CONTRIBUTING.md).
 
 ## License
-See the [LICENSE](LICENSE.txt) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/LICENSE.txt) file for license rights and limitations (MIT).
+
+## For Maintainers
+
+File `requirements.txt` can be updated using the command:
+```
+bash pip-freeze-without-torch.sh > requirements.txt
+```
+This script saves all dependencies of the current active environment except `torch`.
+
+In order to add the next version of the package to pypi, do the following steps:
+- First, increment the package version in `pyproject.toml`.
+- Then build the new version: run `python3.9 -m build` from the main folder.
+- Finally, upload to pypi: `twine upload dist/*` (two newly created files).

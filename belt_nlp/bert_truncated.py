@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from lib.model.bert import BertClassifier
+from belt_nlp.bert import BertClassifier
 
 
 class BertClassifierTruncated(BertClassifier):

@@ -1,7 +1,7 @@
 import pandas as pd
 
-from lib.model.bert_with_pooling import BertClassifierWithPooling
-from lib.model.tensor_utils import list_of_tensors_deep_equal
+from belt_nlp.bert_with_pooling import BertClassifierWithPooling
+from belt_nlp.tensor_utils import list_of_tensors_deep_equal
 
 MODEL_PARAMS = {
     "batch_size": 1,

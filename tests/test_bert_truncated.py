@@ -1,7 +1,7 @@
 from pathlib import Path
 from shutil import rmtree
 
-from lib.model.bert_truncated import BertClassifierTruncated
+from belt_nlp.bert_truncated import BertClassifierTruncated
 
 MODEL_PARAMS = {
     "batch_size": 1,
