@@ -6,6 +6,9 @@
 Welcome to BELT (BERT For Longer Texts)'s documentation!
 ========================================================
 
+.. include:: bert_for_longer_texts.md
+   :parser: myst_parser.sphinx_
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
