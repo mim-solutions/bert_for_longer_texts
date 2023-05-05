@@ -16,7 +16,7 @@ They are used in the following way:
 - The `chunk_size` is analogous to [kernel_size](https://pytorch.org/docs/stable/generated/torch.nn.Conv1d.html) in 1D CNNs.
 - We ignore chunks which are too small - smaller than `minimal_chunk_length`. This parameter cannot be set larger than `chunk_size`.
 - See the example in [the aforementioned comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194).
-- More examples of splitting with different sets of parameters are in [test_splitting](../tests/model/test_splitting.py).
+- More examples of splitting with different sets of parameters are in [test_splitting](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/tests/test_splitting.py).
 - The string parameter `pooling_strategy` is used at the end to aggregate the model results. It can be either `mean` or `max`.
 
 ### 1. Preparing a single text
@@ -33,7 +33,7 @@ We follow [this instruction](https://www.kdnuggets.com/2021/04/apply-transformer
 - We obtain the final probability by using the aggregation function on these probabilities (this function is mean or maximum - it depends on the hyperparameter `pooling_strategy`).
 
 ### 3. Fine-tuning the classifier
-- During training, we do the same steps as above. The crucial part is that all the operations of the type `cat/stack/split/mean/max` must be done on tensors with the attached gradient. That is, we use built-in torch tensor transformations. Any intermediate conversions to lists or arrays are not allowed. Otherwise, the crucial backpropagation command `loss.backward()` won't work. More precisely, we override the standard `torch` training loop in the method `_evaluate_single_batch` in the [bert_with_pooling.py](../lib/model/bert_with_pooling.py).
+- During training, we do the same steps as above. The crucial part is that all the operations of the type `cat/stack/split/mean/max` must be done on tensors with the attached gradient. That is, we use built-in torch tensor transformations. Any intermediate conversions to lists or arrays are not allowed. Otherwise, the crucial backpropagation command `loss.backward()` won't work. More precisely, we override the standard `torch` training loop in the method `_evaluate_single_batch` in the [bert_with_pooling.py](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/belt_nlp/bert_with_pooling.py).
 - Because the number of chunks for the given input text is variable, texts after tokenization are tensors with variable length. The default torch class `Dataloader` cannot allow this (because it automatically wants to stack the tensors). That is why we create custom dataloaders with overwritten method `collate_fn` - more details can be found [here](https://discuss.pytorch.org/t/dataloader-for-various-length-of-data/6418).
 
 ## Remarks
