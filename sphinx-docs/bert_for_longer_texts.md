@@ -1,4 +1,4 @@
-# BERT modification for longer texts.
+# BERT modification for longer texts
 
 ## Motivation
 The BERT model can only use the text of the maximal length of $512$ tokens (roughly speaking: token = word). It is built in the model architecture and cannot be directly changed. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27).
