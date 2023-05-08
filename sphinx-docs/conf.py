@@ -21,6 +21,7 @@ release = '2021'
 extensions = [
     'sphinx.ext.autodoc',
     'myst_parser',  # .md support
+    'sphinx.ext.githubpages',  # adds .nojekyll
 ]
 
 templates_path = ['_templates']
