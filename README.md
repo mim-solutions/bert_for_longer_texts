@@ -6,7 +6,7 @@
 
 The BERT model can process texts of the maximal length of 512 tokens (roughly speaking tokens are equivalent to words). It is a consequence of the model architecture and cannot be directly adjusted. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27). Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194). The main goal of our project is to implement this method and allow the BERT model to process longer texts during prediction and fine-tuning. We dub this approach BELT (**BE**RT For **L**onger **T**exts).
 
-More technical details are described in a [document](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
+More technical details are described in the [documentation](https://mim-solutions.github.io/bert_for_longer_texts/). We also prepared the comprehensive blog post: [part 1](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-1/), [part 2](https://www.mim.ai/fine-tuning-bert-model-for-arbitrarily-long-texts-part-2/).
 
 ### Attention is all you need, but 512 words is all you have
 
