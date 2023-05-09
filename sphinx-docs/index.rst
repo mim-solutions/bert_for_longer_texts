@@ -6,6 +6,11 @@
 Welcome to BELT (BERT For Longer Texts)'s documentation!
 ========================================================
 
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
+   :start-after: ## Installation and dependencies
+   :end-before: ##
+
 .. include:: bert_for_longer_texts.md
    :parser: myst_parser.sphinx_
 
