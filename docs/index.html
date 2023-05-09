@@ -118,7 +118,7 @@ They are used in the following way:</p>
 <h4>2. Model evaluation<a class="headerlink" href="#model-evaluation" title="Permalink to this heading"></a></h4>
 <ul class="simple">
 <li><p>The stacked tensor is then fed into the model as a mini-batch.</p></li>
-<li><p>We get $N$ probabilities, one for each text chunk.</p></li>
+<li><p>We get N probabilities, one for each text chunk.</p></li>
 <li><p>We obtain the final probability by using the aggregation function on these probabilities (this function is mean or maximum - it depends on the hyperparameter <code class="docutils literal notranslate"><span class="pre">pooling_strategy</span></code>).</p></li>
 </ul>
 </section>
