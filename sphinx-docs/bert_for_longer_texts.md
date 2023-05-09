@@ -1,15 +1,15 @@
 # BERT modification for longer texts
 
 ## Motivation
-The BERT model can only use the text of the maximal length of $512$ tokens (roughly speaking: token = word). It is built in the model architecture and cannot be directly changed. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27).
+The BERT model can only use the text of the maximal length of 512 tokens (roughly speaking: token = word). It is built in the model architecture and cannot be directly changed. Discussion of this issue can be found [here](https://github.com/google-research/bert/issues/27).
 
 ## Method
 Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: [comment](https://github.com/google-research/bert/issues/27#issuecomment-435265194).
 
 The procedure of splitting and pooling is determined by the hyperparameters of the class `BertClassifierWithPooling`. These are `maximal_text_length`, `chunk_size`, `stride`, `minimal_chunk_length`,  and `pooling_strategy`.
 They are used in the following way:
-- The parameter `maximal_text_length` is used to truncate the tokens. It can be either `None`, which means no truncation, or an integer, determining the number of tokens to consider. Standard BERT truncates to $510$ tokens because it needs $2$ additional tokens at the beginning and the end.
-- The integer parameter `chunk_size` determines the size (in number of tokens) of each chunk. This parameter cannot be larger than $510$. Otherwise, we will not be able to fit the chunk into the input of BERT.
+- The parameter `maximal_text_length` is used to truncate the tokens. It can be either `None`, which means no truncation, or an integer, determining the number of tokens to consider. Standard BERT truncates to 510 tokens because it needs 2 additional tokens at the beginning and the end.
+- The integer parameter `chunk_size` determines the size (in number of tokens) of each chunk. This parameter cannot be larger than 510. Otherwise, we will not be able to fit the chunk into the input of BERT.
 - Tokens may overlap depending on the parameter `stride`.
 - In other words: we get chunks by moving the window of the size `chunk_size` by the length equal to `stride`. Stride cannot be bigger than chunk size. Chunks must overlap or be near each other.
 - Stride has the analogous meaning here to that in [convolutional neural networks](https://deepai.org/machine-learning-glossary-and-terms/stride).
@@ -29,7 +29,7 @@ We follow [this instruction](https://www.kdnuggets.com/2021/04/apply-transformer
 
 ### 2. Model evaluation
 - The stacked tensor is then fed into the model as a mini-batch.
-- We get $N$ probabilities, one for each text chunk.
+- We get N probabilities, one for each text chunk.
 - We obtain the final probability by using the aggregation function on these probabilities (this function is mean or maximum - it depends on the hyperparameter `pooling_strategy`).
 
 ### 3. Fine-tuning the classifier
