@@ -1,49 +1,86 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-
-    <title>BERT modification for longer texts &#8212; BELT (BERT For Longer Texts) 2021 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BERT modification for longer texts &mdash; BELT (BERT For Longer Texts) 2021 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="index.html" class="icon icon-home">
+            BELT (BERT For Longer Texts)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">belt_nlp</a></li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BELT (BERT For Longer Texts)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BERT modification for longer texts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bert_for_longer_texts.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="bert-modification-for-longer-texts">
-<h1>BERT modification for longer texts<a class="headerlink" href="#bert-modification-for-longer-texts" title="Permalink to this heading">¶</a></h1>
+<h1>BERT modification for longer texts<a class="headerlink" href="#bert-modification-for-longer-texts" title="Permalink to this heading"></a></h1>
 <section id="motivation">
-<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this heading">¶</a></h2>
-<p>The BERT model can only use the text of the maximal length of $512$ tokens (roughly speaking: token = word). It is built in the model architecture and cannot be directly changed. Discussion of this issue can be found <a class="reference external" href="https://github.com/google-research/bert/issues/27">here</a>.</p>
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this heading"></a></h2>
+<p>The BERT model can only use the text of the maximal length of 512 tokens (roughly speaking: token = word). It is built in the model architecture and cannot be directly changed. Discussion of this issue can be found <a class="reference external" href="https://github.com/google-research/bert/issues/27">here</a>.</p>
 </section>
 <section id="method">
-<h2>Method<a class="headerlink" href="#method" title="Permalink to this heading">¶</a></h2>
+<h2>Method<a class="headerlink" href="#method" title="Permalink to this heading"></a></h2>
 <p>Method to overcome this issue was proposed by Devlin (one of the authors of BERT) in the previously mentioned discussion: <a class="reference external" href="https://github.com/google-research/bert/issues/27#issuecomment-435265194">comment</a>.</p>
 <p>The procedure of splitting and pooling is determined by the hyperparameters of the class <code class="docutils literal notranslate"><span class="pre">BertClassifierWithPooling</span></code>. These are <code class="docutils literal notranslate"><span class="pre">maximal_text_length</span></code>, <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code>, <code class="docutils literal notranslate"><span class="pre">stride</span></code>, <code class="docutils literal notranslate"><span class="pre">minimal_chunk_length</span></code>,  and <code class="docutils literal notranslate"><span class="pre">pooling_strategy</span></code>.
 They are used in the following way:</p>
 <ul class="simple">
-<li><p>The parameter <code class="docutils literal notranslate"><span class="pre">maximal_text_length</span></code> is used to truncate the tokens. It can be either <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means no truncation, or an integer, determining the number of tokens to consider. Standard BERT truncates to $510$ tokens because it needs $2$ additional tokens at the beginning and the end.</p></li>
-<li><p>The integer parameter <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code> determines the size (in number of tokens) of each chunk. This parameter cannot be larger than $510$. Otherwise, we will not be able to fit the chunk into the input of BERT.</p></li>
+<li><p>The parameter <code class="docutils literal notranslate"><span class="pre">maximal_text_length</span></code> is used to truncate the tokens. It can be either <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means no truncation, or an integer, determining the number of tokens to consider. Standard BERT truncates to 510 tokens because it needs 2 additional tokens at the beginning and the end.</p></li>
+<li><p>The integer parameter <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code> determines the size (in number of tokens) of each chunk. This parameter cannot be larger than 510. Otherwise, we will not be able to fit the chunk into the input of BERT.</p></li>
 <li><p>Tokens may overlap depending on the parameter <code class="docutils literal notranslate"><span class="pre">stride</span></code>.</p></li>
 <li><p>In other words: we get chunks by moving the window of the size <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code> by the length equal to <code class="docutils literal notranslate"><span class="pre">stride</span></code>. Stride cannot be bigger than chunk size. Chunks must overlap or be near each other.</p></li>
 <li><p>Stride has the analogous meaning here to that in <a class="reference external" href="https://deepai.org/machine-learning-glossary-and-terms/stride">convolutional neural networks</a>.</p></li>
@@ -54,7 +91,7 @@ They are used in the following way:</p>
 <li><p>The string parameter <code class="docutils literal notranslate"><span class="pre">pooling_strategy</span></code> is used at the end to aggregate the model results. It can be either <code class="docutils literal notranslate"><span class="pre">mean</span></code> or <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
 </ul>
 <section id="preparing-a-single-text">
-<h3>1. Preparing a single text<a class="headerlink" href="#preparing-a-single-text" title="Permalink to this heading">¶</a></h3>
+<h3>1. Preparing a single text<a class="headerlink" href="#preparing-a-single-text" title="Permalink to this heading"></a></h3>
 <p>We follow <a class="reference external" href="https://www.kdnuggets.com/2021/04/apply-transformers-any-length-text.html">this instruction</a>. The main difference is that we allow the text chunks to overlap.</p>
 <ul class="simple">
 <li><p>Tokenize the whole text (if <code class="docutils literal notranslate"><span class="pre">maximal_text_length=None</span></code>) or truncate to the size <code class="docutils literal notranslate"><span class="pre">maximal_text_length</span></code>.</p></li>
@@ -65,7 +102,7 @@ They are used in the following way:</p>
 </ul>
 </section>
 <section id="model-evaluation">
-<h3>2. Model evaluation<a class="headerlink" href="#model-evaluation" title="Permalink to this heading">¶</a></h3>
+<h3>2. Model evaluation<a class="headerlink" href="#model-evaluation" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>The stacked tensor is then fed into the model as a mini-batch.</p></li>
 <li><p>We get $N$ probabilities, one for each text chunk.</p></li>
@@ -73,7 +110,7 @@ They are used in the following way:</p>
 </ul>
 </section>
 <section id="fine-tuning-the-classifier">
-<h3>3. Fine-tuning the classifier<a class="headerlink" href="#fine-tuning-the-classifier" title="Permalink to this heading">¶</a></h3>
+<h3>3. Fine-tuning the classifier<a class="headerlink" href="#fine-tuning-the-classifier" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>During training, we do the same steps as above. The crucial part is that all the operations of the type <code class="docutils literal notranslate"><span class="pre">cat/stack/split/mean/max</span></code> must be done on tensors with the attached gradient. That is, we use built-in torch tensor transformations. Any intermediate conversions to lists or arrays are not allowed. Otherwise, the crucial backpropagation command <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> won’t work. More precisely, we override the standard <code class="docutils literal notranslate"><span class="pre">torch</span></code> training loop in the method <code class="docutils literal notranslate"><span class="pre">_evaluate_single_batch</span></code> in the <a class="reference external" href="https://github.com/mim-solutions/bert_for_longer_texts/blob/main/belt_nlp/bert_with_pooling.py">bert_with_pooling.py</a>.</p></li>
 <li><p>Because the number of chunks for the given input text is variable, texts after tokenization are tensors with variable length. The default torch class <code class="docutils literal notranslate"><span class="pre">Dataloader</span></code> cannot allow this (because it automatically wants to stack the tensors). That is why we create custom dataloaders with overwritten method <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> - more details can be found <a class="reference external" href="https://discuss.pytorch.org/t/dataloader-for-various-length-of-data/6418">here</a>.</p></li>
@@ -81,7 +118,7 @@ They are used in the following way:</p>
 </section>
 </section>
 <section id="remarks">
-<h2>Remarks<a class="headerlink" href="#remarks" title="Permalink to this heading">¶</a></h2>
+<h2>Remarks<a class="headerlink" href="#remarks" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Because we fed all the text chunks as a mini-batch, the procedure may use a lot of GPU memory to fit all the gradients during fine-tuning even with <code class="docutils literal notranslate"><span class="pre">batch_size=1</span></code>. In this case, we recommend setting the parameter <code class="docutils literal notranslate"><span class="pre">maximal_text_length</span></code> to truncate longer texts. Naturally, this is the trade-off between the context we want the model to look at and the available resources. Setting <code class="docutils literal notranslate"><span class="pre">maximal_text_length=510</span></code> is equivalent to using the standard BERT model with truncation.</p></li>
 </ul>
@@ -89,70 +126,31 @@ They are used in the following way:</p>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MIM Solutions.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">BELT (BERT For Longer Texts)</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">belt_nlp</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2023, MIM Solutions.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
-      
-      |
-      <a href="_sources/bert_for_longer_texts.md.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
