@@ -29,7 +29,7 @@ We follow [this instruction](https://www.kdnuggets.com/2021/04/apply-transformer
 
 ### 2. Model evaluation
 - The stacked tensor is then fed into the model as a mini-batch.
-- We get $N$ probabilities, one for each text chunk.
+- We get N probabilities, one for each text chunk.
 - We obtain the final probability by using the aggregation function on these probabilities (this function is mean or maximum - it depends on the hyperparameter `pooling_strategy`).
 
 ### 3. Fine-tuning the classifier
