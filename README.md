@@ -39,7 +39,7 @@ If you want to clone the repo in order to run tests or notebooks, you can use th
 
 Two main classes are implemented:
 - `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
-- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
+- `BertClassifierWithPooling` - extended model for longer texts (more details in the [documentation](https://mim-solutions.github.io/bert_for_longer_texts/))
 
 ## Interface
 
