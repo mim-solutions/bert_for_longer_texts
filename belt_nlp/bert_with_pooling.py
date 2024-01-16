@@ -6,8 +6,8 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from bert import BertClassifier
-from splitting import transform_list_of_texts
+from belt_nlp.bert import BertClassifier
+from belt_nlp.splitting import transform_list_of_texts
 
 
 class BertClassifierWithPooling(BertClassifier):
