@@ -50,8 +50,12 @@ class BertClassifier(ABC):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.accumulation_steps = accumulation_steps
-        self._params = {"batch_size": self.batch_size, "learning_rate": self.learning_rate, "epochs": self.epochs, "accumulation_steps": self.accumulation_steps}
-
+        self._params = {
+            "batch_size": self.batch_size,
+            "learning_rate": self.learning_rate,
+            "epochs": self.epochs,
+            "accumulation_steps": self.accumulation_steps
+        }
         self.device = device
         self.many_gpus = many_gpus
         self.tokenizer = tokenizer
@@ -120,7 +124,7 @@ class BertClassifier(ABC):
 
             labels = batch[-1].float().cpu()
             predictions = self._evaluate_single_batch(batch)
-            loss = cross_entropy(predictions, labels) / self.num_accumulation_steps
+            loss = cross_entropy(predictions, labels) / self.accumulation_steps
             loss.backward()
 
             if ((step + 1) % self.accumulation_steps == 0) or (step + 1 == len(dataloader)):
