@@ -6,8 +6,8 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from belt_nlp.bert import BertClassifier
-from belt_nlp.splitting import transform_list_of_texts
+from bert import BertClassifier
+from splitting import transform_list_of_texts
 
 
 class BertClassifierWithPooling(BertClassifier):
@@ -36,6 +36,7 @@ class BertClassifierWithPooling(BertClassifier):
         stride: int,
         minimal_chunk_length: int,
         pooling_strategy: str = "mean",
+        accumulation_steps: Optional[int] = 1,
         maximal_text_length: Optional[int] = None,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
@@ -47,6 +48,7 @@ class BertClassifierWithPooling(BertClassifier):
             batch_size,
             learning_rate,
             epochs,
+            accumulation_steps,
             tokenizer,
             neural_network,
             pretrained_model_name_or_path,
