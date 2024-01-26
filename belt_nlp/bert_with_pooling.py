@@ -36,7 +36,7 @@ class BertClassifierWithPooling(BertClassifier):
         stride: int,
         minimal_chunk_length: int,
         pooling_strategy: str = "mean",
-        accumulation_steps: Optional[int] = 1,
+        accumulation_steps: int = 1,
         maximal_text_length: Optional[int] = None,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,

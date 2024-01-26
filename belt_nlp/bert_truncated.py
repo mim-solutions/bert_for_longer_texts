@@ -14,7 +14,7 @@ class BertClassifierTruncated(BertClassifier):
         batch_size: int,
         learning_rate: float,
         epochs: int,
-        accumulation_steps: Optional[int] = 1,
+        accumulation_steps: int = 1,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
