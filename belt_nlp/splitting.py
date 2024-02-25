@@ -6,7 +6,6 @@ from transformers import BatchEncoding, PreTrainedTokenizerBase
 
 from belt_nlp.exceptions import InconsistentSplittingParamsException
 
-
 # Functions for preparing input for longer texts - based on
 # https://www.kdnuggets.com/2021/04/apply-transformers-any-length-text.html
 

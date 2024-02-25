@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Optional
 
 import torch
@@ -29,6 +30,7 @@ class BertClassifierWithPooling(BertClassifier):
 
     def __init__(
         self,
+        num_labels: int,
         batch_size: int,
         learning_rate: float,
         epochs: int,
@@ -45,6 +47,7 @@ class BertClassifierWithPooling(BertClassifier):
         many_gpus: bool = False,
     ):
         super().__init__(
+            num_labels,
             batch_size,
             learning_rate,
             epochs,
@@ -121,23 +124,21 @@ class BertClassifierWithPooling(BertClassifier):
         )
 
         # get model predictions for the combined batch
-        preds = self.neural_network(input_ids_combined_tensors, attention_mask_combined_tensors)
+        logits = self.neural_network(input_ids_combined_tensors, attention_mask_combined_tensors)
 
-        preds = preds.flatten().cpu()
+        # split result logits into chunks
 
-        # split result preds into chunks
-
-        preds_split = preds.split(number_of_chunks)
+        logits_split = logits.split(number_of_chunks, dim=0)
 
         # pooling
         if self.pooling_strategy == "mean":
-            pooled_preds = torch.cat([torch.mean(x).reshape(1) for x in preds_split])
+            pooled_logits = torch.stack([torch.mean(x, dim=0) for x in logits_split])
         elif self.pooling_strategy == "max":
-            pooled_preds = torch.cat([torch.max(x).reshape(1) for x in preds_split])
+            pooled_logits = torch.stack([torch.max(x, dim=0) for x in logits_split])
         else:
             raise ValueError("Unknown pooling strategy!")
 
-        return pooled_preds
+        return pooled_logits
 
     @staticmethod
     def collate_fn_pooled_tokens(data):
