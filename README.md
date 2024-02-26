@@ -69,6 +69,10 @@ The project was created at [MIM AI](https://www.mim.ai/) by:
 
 If you want to contribute to the library, see the [contributing info](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CONTRIBUTING.md).
 
+## Version history
+
+See [CHANGELOG.md](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CHANGELOG.md).
+
 ## License
 See the [LICENSE](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/LICENSE.txt) file for license rights and limitations (MIT).
 
