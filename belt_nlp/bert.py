@@ -33,6 +33,7 @@ class BertClassifier(ABC):
         batch_size: int,
         learning_rate: float,
         epochs: int,
+        accumulation_steps: int = 1,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
@@ -48,8 +49,13 @@ class BertClassifier(ABC):
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.epochs = epochs
-        self._params = {"batch_size": self.batch_size, "learning_rate": self.learning_rate, "epochs": self.epochs}
-
+        self.accumulation_steps = accumulation_steps
+        self._params = {
+            "batch_size": self.batch_size,
+            "learning_rate": self.learning_rate,
+            "epochs": self.epochs,
+            "accumulation_steps": self.accumulation_steps
+        }
         self.device = device
         self.many_gpus = many_gpus
         self.tokenizer = tokenizer
@@ -115,13 +121,15 @@ class BertClassifier(ABC):
         cross_entropy = BCELoss()
 
         for step, batch in enumerate(dataloader):
-            optimizer.zero_grad()
+
             labels = batch[-1].float().cpu()
             predictions = self._evaluate_single_batch(batch)
-
-            loss = cross_entropy(predictions, labels)
+            loss = cross_entropy(predictions, labels) / self.accumulation_steps
             loss.backward()
-            optimizer.step()
+
+            if ((step + 1) % self.accumulation_steps == 0) or (step + 1 == len(dataloader)):
+                optimizer.step()
+                optimizer.zero_grad()
 
     @abstractmethod
     def _evaluate_single_batch(self, batch: tuple[Tensor]) -> Tensor:

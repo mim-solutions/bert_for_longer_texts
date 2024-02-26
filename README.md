@@ -39,7 +39,7 @@ If you want to clone the repo in order to run tests or notebooks, you can use th
 
 Two main classes are implemented:
 - `BertClassifierTruncated` - base binary classification model, longer texts are truncated to 512 tokens
-- `BertClassifierWithPooling` - extended model for longer texts ([more details here](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/docs/bert_for_longer_texts.md))
+- `BertClassifierWithPooling` - extended model for longer texts (more details in the [documentation](https://mim-solutions.github.io/bert_for_longer_texts/))
 
 ## Interface
 
@@ -68,6 +68,10 @@ The project was created at [MIM AI](https://www.mim.ai/) by:
 - [Marek Wachnicki](https://github.com/mwachnicki)
 
 If you want to contribute to the library, see the [contributing info](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CONTRIBUTING.md).
+
+## Version history
+
+See [CHANGELOG.md](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/CHANGELOG.md).
 
 ## License
 See the [LICENSE](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/LICENSE.txt) file for license rights and limitations (MIT).
