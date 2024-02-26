@@ -134,7 +134,7 @@ class BertClassifierWithPooling(BertClassifier):
         if self.pooling_strategy == "mean":
             pooled_logits = torch.stack([torch.mean(x, dim=0) for x in logits_split])
         elif self.pooling_strategy == "max":
-            pooled_logits = torch.stack([torch.max(x, dim=0) for x in logits_split])
+            pooled_logits = torch.stack([torch.max(x, dim=0)[0] for x in logits_split])
         else:
             raise ValueError("Unknown pooling strategy!")
 

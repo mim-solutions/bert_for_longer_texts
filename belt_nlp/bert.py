@@ -44,11 +44,6 @@ class BertClassifier(ABC):
     ):
         self.num_labels = num_labels
 
-        if num_labels == 1:
-            self.loss_function = MSELoss()
-        else:
-            self.loss_function = CrossEntropyLoss()
-
         if not tokenizer:
             tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         if not neural_network:
@@ -117,9 +112,16 @@ class BertClassifier(ABC):
         self.neural_network.train()
 
         for step, batch in enumerate(dataloader):
-            labels = batch[-1].long().to(self.device)
-            logits = self._evaluate_single_batch(batch)
-            loss = self.loss_function(logits, labels) / self.accumulation_steps
+            if self.num_labels > 1:
+                labels = batch[-1].long().to(self.device)
+                loss_function = CrossEntropyLoss()
+                logits = self._evaluate_single_batch(batch)
+                loss = loss_function(logits, labels) / self.accumulation_steps
+            elif self.num_labels == 1:
+                labels = batch[-1].float().to(self.device)
+                loss_function = MSELoss()
+                scores = torch.flatten(self._evaluate_single_batch(batch))
+                loss = loss_function(scores, labels) / self.accumulation_steps
             loss.backward()
 
             if ((step + 1) % self.accumulation_steps == 0) or (step + 1 == len(dataloader)):
