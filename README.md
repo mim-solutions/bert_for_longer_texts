@@ -1,5 +1,7 @@
 # **BELT** (**BE**RT For **L**onger **T**exts)
 
+🚀**New in version 1.1.0: support for multilabel and regression**. See [the examples](#examples)🚀
+
 ## Project description and motivation
 
 ### The BELT approach
@@ -59,8 +61,21 @@ It can be either:
 To make sure everything works properly, run the command ```pytest tests -rA```. As a default, during tests, models are trained on small samples on the CPU.
 
 ## Examples
-- [fit and predict method for base model](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_base_model_fit_predict.ipynb)
-- [fit and predict method for model with pooling](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/example_model_with_pooling_fit_predict.ipynb)
+
+All examples use public datasets from huggingface hub.
+
+### Binary classification - prediction of sentiment of IMDB reviews
+- [standard approach](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/binary_classification/base.ipynb)
+- [belt](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/binary_classification/belt.ipynb)
+
+### Multilabel classification - recognizing authors of Guardian articles
+- [standard approach](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/multiclass/base.ipynb)
+- [belt](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/multiclass/belt.ipynb)
+- **Notice the effectiveness of the BELT approach here: the test accuracy increased by 10%.**
+
+### Regression - prediction of 1 to 5 rating based on reviews from Polish online e-commerce platform Allegro
+- [standard approach](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/regression/base.ipynb)
+- [belt](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/notebooks/regression/belt.ipynb)
 
 ## Contributors
 The project was created at [MIM AI](https://www.mim.ai/) by:
