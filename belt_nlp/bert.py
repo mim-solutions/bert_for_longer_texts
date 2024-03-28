@@ -30,20 +30,21 @@ class BertClassifier(ABC):
     @abstractmethod
     def __init__(
         self,
-        batch_size: int,
-        learning_rate: float,
-        epochs: int,
+        batch_size: int = 0, # Not needed for embeddings afaik
+        learning_rate: float = 0.0, # Not needed for embeddings afaik
+        epochs: int = 0, # Not needed for embeddings afaik
         accumulation_steps: int = 1,
         tokenizer: Optional[PreTrainedTokenizerBase] = None,
         neural_network: Optional[Module] = None,
         pretrained_model_name_or_path: Optional[str] = "bert-base-uncased",
+        trust_remote_code: Optional[bool] = False, # Add support for trust remote if needed
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
         if not tokenizer:
             tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         if not neural_network:
-            bert = AutoModel.from_pretrained(pretrained_model_name_or_path)
+            bert = AutoModel.from_pretrained(pretrained_model_name_or_path, trust_remote_code=trust_remote_code)
             neural_network = BertClassifierNN(bert)
 
         self.batch_size = batch_size
@@ -172,11 +173,16 @@ class BertClassifierNN(Module):
         self.linear = Linear(768, 1)
         self.sigmoid = Sigmoid()
 
-    def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
-        x = self.model(input_ids, attention_mask)
-        x = x[0][:, 0, :]  # take <s> token (equiv. to [CLS])
+    def forward(self, input_ids: Tensor, attention_mask: Tensor, return_embeddings: bool = False) -> Tensor:
+        outputs = self.model(input_ids, attention_mask=attention_mask)
 
-        # classification head
+        if return_embeddings:
+            # Return raw embeddings directly
+            # Shape: (batch_size, sequence_length, hidden_size)
+            return outputs.last_hidden_state
+
+        # Proceed with classification otherwise
+        x = outputs[0][:, 0, :]  # Take <s> token (equiv. to [CLS])
         x = self.linear(x)
         x = self.sigmoid(x)
         return x
