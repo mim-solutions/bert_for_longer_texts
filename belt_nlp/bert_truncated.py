@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from typing import Optional
-import torch
+
 from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
@@ -11,6 +12,7 @@ from belt_nlp.bert import BertClassifier
 class BertClassifierTruncated(BertClassifier):
     def __init__(
         self,
+        num_labels: int,
         batch_size: int,
         learning_rate: float,
         epochs: int,
@@ -22,6 +24,7 @@ class BertClassifierTruncated(BertClassifier):
         many_gpus: bool = False,
     ):
         super().__init__(
+            num_labels,
             batch_size,
             learning_rate,
             epochs,
@@ -53,6 +56,5 @@ class BertClassifierTruncated(BertClassifier):
         batch = [t.to(self.device) for t in batch]
         model_input = batch[:2]
 
-        predictions = self.neural_network(*model_input)
-        predictions = torch.flatten(predictions).cpu()
-        return predictions
+        logits = self.neural_network(*model_input)
+        return logits

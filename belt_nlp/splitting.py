@@ -6,7 +6,6 @@ from transformers import BatchEncoding, PreTrainedTokenizerBase
 
 from belt_nlp.exceptions import InconsistentSplittingParamsException
 
-
 # Functions for preparing input for longer texts - based on
 # https://www.kdnuggets.com/2021/04/apply-transformers-any-length-text.html
 
@@ -83,6 +82,10 @@ def add_special_tokens_at_beginning_and_end(input_id_chunks: list[Tensor], mask_
     Adds SEP token (token id = 102) at the end of each chunk.
     Adds corresponding attention masks equal to 1 (attention mask is boolean).
     """
+    if len(input_id_chunks) == 0:
+        input_id_chunks.append(torch.Tensor([101, 102]))
+        mask_chunks.append(torch.Tensor([1, 1]))
+        return
     for i in range(len(input_id_chunks)):
         # adding CLS (token id 101) and SEP (token id 102) tokens
         input_id_chunks[i] = torch.cat([Tensor([101]), input_id_chunks[i], Tensor([102])])

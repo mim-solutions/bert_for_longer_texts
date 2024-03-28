@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 import json
 from pathlib import Path
@@ -6,9 +7,9 @@ from typing import Any, Optional, Union
 
 import torch
 from torch import Tensor
-from torch.nn import BCELoss, DataParallel, Module, Linear, Sigmoid
+from torch.nn import CrossEntropyLoss, DataParallel, Linear, Module, MSELoss
 from torch.optim import AdamW, Optimizer
-from torch.utils.data import Dataset, RandomSampler, SequentialSampler, DataLoader
+from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
 from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, PreTrainedTokenizerBase, RobertaModel
 
 
@@ -30,6 +31,7 @@ class BertClassifier(ABC):
     @abstractmethod
     def __init__(
         self,
+        num_labels: int,
         batch_size: int,
         learning_rate: float,
         epochs: int,
@@ -40,21 +42,24 @@ class BertClassifier(ABC):
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
+        self.num_labels = num_labels
+
         if not tokenizer:
             tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         if not neural_network:
             bert = AutoModel.from_pretrained(pretrained_model_name_or_path)
-            neural_network = BertClassifierNN(bert)
+            neural_network = BertClassifierNN(model=bert, num_labels=num_labels)
 
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.accumulation_steps = accumulation_steps
         self._params = {
+            "num_labels": self.num_labels,
             "batch_size": self.batch_size,
             "learning_rate": self.learning_rate,
             "epochs": self.epochs,
-            "accumulation_steps": self.accumulation_steps
+            "accumulation_steps": self.accumulation_steps,
         }
         self.device = device
         self.many_gpus = many_gpus
@@ -79,21 +84,8 @@ class BertClassifier(ABC):
         for epoch in range(epochs):
             self._train_single_epoch(dataloader, optimizer)
 
-    def predict(self, x: list[str], batch_size: Optional[int] = None) -> list[tuple[bool, float]]:
-        if not batch_size:
-            batch_size = self.batch_size
-        scores = self.predict_scores(x, batch_size)
-        classes = [i >= 0.5 for i in scores]
-        return list(zip(classes, scores))
-
-    def predict_classes(self, x: list[str], batch_size: Optional[int] = None) -> list[bool]:
-        if not batch_size:
-            batch_size = self.batch_size
-        scores = self.predict_scores(x, batch_size)
-        classes = [i >= 0.5 for i in scores]
-        return classes
-
-    def predict_scores(self, x: list[str], batch_size: Optional[int] = None) -> list[float]:
+    def predict_logits(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
+        """Returns classification (or regression if num_labels==1) scores (before SoftMax)."""
         if not batch_size:
             batch_size = self.batch_size
         tokens = self._tokenize(x)
@@ -101,16 +93,16 @@ class BertClassifier(ABC):
         dataloader = DataLoader(
             dataset, sampler=SequentialSampler(dataset), batch_size=batch_size, collate_fn=self.collate_fn
         )
-        total_predictions = []
+        total_logits = []
 
         # deactivate dropout layers
         self.neural_network.eval()
         for step, batch in enumerate(dataloader):
             # deactivate autograd
             with torch.no_grad():
-                predictions = self._evaluate_single_batch(batch)
-                total_predictions.extend(predictions.tolist())
-        return total_predictions
+                logits = self._evaluate_single_batch(batch)
+                total_logits.append(logits)
+        return torch.cat(total_logits)
 
     @abstractmethod
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
@@ -118,13 +110,18 @@ class BertClassifier(ABC):
 
     def _train_single_epoch(self, dataloader: DataLoader, optimizer: Optimizer) -> None:
         self.neural_network.train()
-        cross_entropy = BCELoss()
 
         for step, batch in enumerate(dataloader):
-
-            labels = batch[-1].float().cpu()
-            predictions = self._evaluate_single_batch(batch)
-            loss = cross_entropy(predictions, labels) / self.accumulation_steps
+            if self.num_labels > 1:
+                labels = batch[-1].long().to(self.device)
+                loss_function = CrossEntropyLoss()
+                logits = self._evaluate_single_batch(batch)
+                loss = loss_function(logits, labels) / self.accumulation_steps
+            elif self.num_labels == 1:
+                labels = batch[-1].float().to(self.device)
+                loss_function = MSELoss()
+                scores = torch.flatten(self._evaluate_single_batch(batch))
+                loss = loss_function(scores, labels) / self.accumulation_steps
             loss.backward()
 
             if ((step + 1) % self.accumulation_steps == 0) or (step + 1 == len(dataloader)):
@@ -164,13 +161,12 @@ class BertClassifier(ABC):
 
 
 class BertClassifierNN(Module):
-    def __init__(self, model: Union[BertModel, RobertaModel]):
+    def __init__(self, model: Union[BertModel, RobertaModel], num_labels: int):
         super().__init__()
         self.model = model
 
         # classification head
-        self.linear = Linear(768, 1)
-        self.sigmoid = Sigmoid()
+        self.linear = Linear(768, num_labels)
 
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
         x = self.model(input_ids, attention_mask)
@@ -178,7 +174,6 @@ class BertClassifierNN(Module):
 
         # classification head
         x = self.linear(x)
-        x = self.sigmoid(x)
         return x
 
 

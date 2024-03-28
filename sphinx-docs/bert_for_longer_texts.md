@@ -29,12 +29,14 @@ We follow [this instruction](https://www.kdnuggets.com/2021/04/apply-transformer
 
 ### 2. Model evaluation
 - The stacked tensor is then fed into the model as a mini-batch.
-- We get N probabilities, one for each text chunk.
-- We obtain the final probability by using the aggregation function on these probabilities (this function is mean or maximum - it depends on the hyperparameter `pooling_strategy`).
+- We get NxQ logits (for classification, when Q is the number of classes) or N scores (for regression), the first dimension is the chunk index.
+- We obtain the final logits/scores by using the aggregation function over the chunk dimension (this function is mean or maximum - it depends on the hyperparameter `pooling_strategy`)
+- For classification, we obtain the final probabilities for each class by using the softmax.
 
 ### 3. Fine-tuning the classifier
 - During training, we do the same steps as above. The crucial part is that all the operations of the type `cat/stack/split/mean/max` must be done on tensors with the attached gradient. That is, we use built-in torch tensor transformations. Any intermediate conversions to lists or arrays are not allowed. Otherwise, the crucial backpropagation command `loss.backward()` won't work. More precisely, we override the standard `torch` training loop in the method `_evaluate_single_batch` in the [bert_with_pooling.py](https://github.com/mim-solutions/bert_for_longer_texts/blob/main/belt_nlp/bert_with_pooling.py).
 - Because the number of chunks for the given input text is variable, texts after tokenization are tensors with variable length. The default torch class `Dataloader` cannot allow this (because it automatically wants to stack the tensors). That is why we create custom dataloaders with overwritten method `collate_fn` - more details can be found [here](https://discuss.pytorch.org/t/dataloader-for-various-length-of-data/6418).
+- We use cross-entropy loss for classification and mse loss for regression. 
 
 ## Remarks
 - Because we fed all the text chunks as a mini-batch, the procedure may use a lot of GPU memory to fit all the gradients during fine-tuning even with `batch_size=1`. In this case, we recommend setting the parameter `maximal_text_length` to truncate longer texts. Naturally, this is the trade-off between the context we want the model to look at and the available resources. Setting `maximal_text_length=510` is equivalent to using the standard BERT model with truncation.
