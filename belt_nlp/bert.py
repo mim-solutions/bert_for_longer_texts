@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampl
 from transformers import AutoModel, AutoTokenizer, BatchEncoding, BertModel, PreTrainedTokenizerBase, RobertaModel
 
 
-class BertClassifier(ABC):
+class BertBase(ABC):
     """
     The "device" parameter can have the following values:
         - "cpu" - The model will be loaded on CPU.
@@ -48,7 +48,7 @@ class BertClassifier(ABC):
             tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         if not neural_network:
             bert = AutoModel.from_pretrained(pretrained_model_name_or_path)
-            neural_network = BertClassifierNN(model=bert, num_labels=num_labels)
+            neural_network = BertNN(model=bert, num_labels=num_labels)
 
         self.batch_size = batch_size
         self.learning_rate = learning_rate
@@ -84,7 +84,7 @@ class BertClassifier(ABC):
         for epoch in range(epochs):
             self._train_single_epoch(dataloader, optimizer)
 
-    def predict_logits(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
+    def _predict_logits(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
         """Returns classification (or regression if num_labels==1) scores (before SoftMax)."""
         if not batch_size:
             batch_size = self.batch_size
@@ -144,7 +144,7 @@ class BertClassifier(ABC):
             torch.save(self.neural_network, model_dir / "model.bin")
 
     @classmethod
-    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertClassifier:
+    def load(cls, model_dir: str, device: str = "cuda:0", many_gpus: bool = False) -> BertBase:
         model_dir = Path(model_dir)
         with open(file=model_dir / "params.json", mode="r", encoding="utf-8") as file:
             params = json.load(file)
@@ -160,7 +160,7 @@ class BertClassifier(ABC):
         )
 
 
-class BertClassifierNN(Module):
+class BertNN(Module):
     def __init__(self, model: Union[BertModel, RobertaModel], num_labels: int):
         super().__init__()
         self.model = model

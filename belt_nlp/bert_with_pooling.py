@@ -7,11 +7,11 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from belt_nlp.bert import BertClassifier
+from belt_nlp.bert import BertBase
 from belt_nlp.splitting import transform_list_of_texts
 
 
-class BertClassifierWithPooling(BertClassifier):
+class BertBaseWithPooling(BertBase):
     """
     The splitting procedure is the following:
         - Tokenize the whole text (if maximal_text_length=None) or truncate to the size maximal_text_length.
@@ -78,7 +78,7 @@ class BertClassifierWithPooling(BertClassifier):
         self._params.update(additional_params)
 
         self.device = device
-        self.collate_fn = BertClassifierWithPooling.collate_fn_pooled_tokens
+        self.collate_fn = BertBaseWithPooling.collate_fn_pooled_tokens
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """

@@ -6,10 +6,10 @@ from torch import Tensor
 from torch.nn import Module
 from transformers import BatchEncoding, PreTrainedTokenizerBase
 
-from belt_nlp.bert import BertClassifier
+from belt_nlp.bert import BertBase
 
 
-class BertClassifierTruncated(BertClassifier):
+class BertBaseTruncated(BertBase):
     def __init__(
         self,
         num_labels: int,
