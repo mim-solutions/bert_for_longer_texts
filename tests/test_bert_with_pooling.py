@@ -1,9 +1,10 @@
 from pathlib import Path
 from shutil import rmtree
 
+import numpy as np
 import torch
 
-from belt_nlp.bert_with_pooling import BertClassifierWithPooling
+from belt_nlp.bert_classifier_with_pooling import BertClassifierWithPooling
 
 MODEL_PARAMS = {
     "num_labels": 2,
@@ -14,7 +15,7 @@ MODEL_PARAMS = {
     "stride": 256,
     "minimal_chunk_length": 1,
     "pooling_strategy": "mean",
-    "device": "cuda",
+    "device": "cpu",
 }
 
 
@@ -29,11 +30,12 @@ def test_fit_and_predict():
     expected_classes = [1, 1]
 
     model.fit(x_train, y_train)
-    logits = model.predict_logits(x_test)
+    classes = model.predict(x_test)
+    scores = model.predict_scores(x_test)
 
-    assert logits.shape == torch.Size([2, 2])
+    assert scores.shape == torch.Size([2, 2])
 
-    assert torch.argmax(logits, dim=1).tolist() == expected_classes
+    assert np.array_equal(classes, expected_classes)
 
 
 def test_prediction_order():
@@ -46,14 +48,14 @@ def test_prediction_order():
     x_test = ["pepper"] * 99 + ["chair"] * 1
 
     model.fit(x_train, y_train)
-    logits = model.predict_logits(x_test)
+    predicted_scores = model.predict_scores(x_test)
 
-    expected_score_pepper = model.predict_logits(["pepper"])
-    expected_score_chair = model.predict_logits(["chair"])
+    expected_score_pepper = model.predict_scores(["pepper"])
+    expected_score_chair = model.predict_scores(["chair"])
 
     expected_result_tensor = torch.cat([expected_score_pepper] * 99 + [expected_score_chair])
 
-    assert torch.equal(logits, expected_result_tensor)
+    assert torch.equal(predicted_scores, expected_result_tensor)
 
 
 def test_save_and_load():
