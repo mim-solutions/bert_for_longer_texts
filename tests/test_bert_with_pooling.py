@@ -66,7 +66,7 @@ def test_save_and_load():
     model.save(str(path))
 
     try:
-        model_loaded = BertClassifierWithPooling.load(str(path))
+        model_loaded = BertClassifierWithPooling.load(str(path), device="cpu")
         # assert types to be more specific than 'isinstance()'
         assert type(model_loaded.tokenizer) == type(model.tokenizer)  # noqa: E721
         assert type(model_loaded.neural_network) == type(model.neural_network)  # noqa: E721
