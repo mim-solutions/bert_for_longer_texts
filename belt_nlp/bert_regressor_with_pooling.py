@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from torch import Tensor
 from torch.nn import Module
 from transformers import PreTrainedTokenizerBase
 
@@ -44,7 +45,7 @@ class BertRegressorWithPooling(BertBaseWithPooling):
             many_gpus=many_gpus,
         )
 
-    def predict(self, x: list[str], batch_size: Optional[int] = None) -> list[int]:
+    def predict(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
         """Returns regression scores."""
         logits = super()._predict_logits(x, batch_size)
         return logits

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from torch import argmax
+from torch import argmax, Tensor
 from torch.nn import Module, Softmax
 from transformers import PreTrainedTokenizerBase
 
@@ -45,14 +45,18 @@ class BertClassifierWithPooling(BertBaseWithPooling):
             device=device,
             many_gpus=many_gpus,
         )
+        additional_classifier_params = {
+            "num_labels": self.num_labels,
+        }
+        self._params.update(additional_classifier_params)
 
-    def predict(self, x: list[str], batch_size: Optional[int] = None) -> list[int]:
+    def predict(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
         """Returns classes."""
         logits = super()._predict_logits(x, batch_size)
-        classes = argmax(logits, dim=1).cpu().numpy()
+        classes = argmax(logits, dim=1)
         return classes
 
-    def predict_scores(self, x: list[str], batch_size: Optional[int] = None) -> list[float]:
+    def predict_scores(self, x: list[str], batch_size: Optional[int] = None) -> Tensor:
         """Returns classification probabilities."""
         logits = super()._predict_logits(x, batch_size)
         softmax = Softmax(dim=1)

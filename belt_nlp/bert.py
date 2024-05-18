@@ -42,6 +42,7 @@ class BertBase(ABC):
         device: str = "cuda:0",
         many_gpus: bool = False,
     ):
+        assert num_labels >= 1, "The num_labels parameter must be at least 1."
         self.num_labels = num_labels
 
         if not tokenizer:
@@ -55,7 +56,6 @@ class BertBase(ABC):
         self.epochs = epochs
         self.accumulation_steps = accumulation_steps
         self._params = {
-            "num_labels": self.num_labels,
             "batch_size": self.batch_size,
             "learning_rate": self.learning_rate,
             "epochs": self.epochs,
