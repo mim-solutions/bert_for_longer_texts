@@ -4,6 +4,7 @@ from shutil import rmtree
 import torch
 
 from belt_nlp.bert_regressor_truncated import BertRegressorTruncated
+
 MODEL_PARAMS = {"batch_size": 1, "learning_rate": 5e-5, "epochs": 1, "device": "cpu"}
 
 
@@ -22,7 +23,7 @@ def test_fit_and_predict():
     assert scores.shape == torch.Size([2, 1])
 
 
-def test_regression_order():
+def test_prediction_order():
     """Check if the order of predictions is preserved."""
     params = MODEL_PARAMS
     model = BertRegressorTruncated(**params)

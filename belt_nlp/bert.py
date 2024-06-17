@@ -71,7 +71,7 @@ class BertBase(ABC):
         if device.startswith("cuda") and many_gpus:
             self.neural_network = DataParallel(self.neural_network)
 
-    def fit(self, x_train: list[str], y_train: list[bool], epochs: Optional[int] = None) -> None:
+    def fit(self, x_train: list[str], y_train: Union[list[bool], list[float]], epochs: Optional[int] = None) -> None:
         if not epochs:
             epochs = self.epochs
         optimizer = AdamW(self.neural_network.parameters(), lr=self.learning_rate)

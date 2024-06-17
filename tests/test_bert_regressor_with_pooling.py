@@ -1,7 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
 
-import numpy as np
 import torch
 
 from belt_nlp.bert_regressor_with_pooling import BertRegressorWithPooling
@@ -33,7 +32,7 @@ def test_fit_and_predict():
     assert scores.shape == torch.Size([2, 1])
 
 
-def test_regression_order():
+def test_prediction_order():
     """Check if the order of predictions is preserved."""
     params = MODEL_PARAMS
     model = BertRegressorWithPooling(**params)

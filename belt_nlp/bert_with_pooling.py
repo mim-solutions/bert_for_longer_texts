@@ -78,7 +78,7 @@ class BertBaseWithPooling(BertBase):
         self._params.update(additional_params)
 
         self.device = device
-        self.collate_fn = BertBaseWithPooling.collate_fn_pooled_tokens
+        self.collate_fn = self.collate_fn_pooled_tokens
 
     def _tokenize(self, texts: list[str]) -> BatchEncoding:
         """
