@@ -1,9 +1,12 @@
 from pathlib import Path
 from shutil import rmtree
 
-from belt_nlp.bert_with_pooling import BertClassifierWithPooling
+import torch
+
+from belt_nlp.bert_classifier_with_pooling import BertClassifierWithPooling
 
 MODEL_PARAMS = {
+    "num_labels": 2,
     "batch_size": 1,
     "learning_rate": 5e-5,
     "epochs": 1,
@@ -11,54 +14,52 @@ MODEL_PARAMS = {
     "stride": 256,
     "minimal_chunk_length": 1,
     "pooling_strategy": "mean",
+    "device": "cpu",
 }
 
 
 def test_fit_and_predict():
     """The test is quite naive, but it goes through all the methods."""
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(**params, device="cpu")
+    model = BertClassifierWithPooling(**params)
     x_train = ["carrot", "cucumber", "tomato", "potato"]
-    y_train = [True] * len(x_train)
+    y_train = [1] * len(x_train)
 
     x_test = ["pepper", "eggplant"]
-    expected_classes = [True, True]
+    expected_classes = torch.Tensor([1, 1])
 
     model.fit(x_train, y_train)
-    predictions = model.predict(x_test)
+    classes = model.predict(x_test)
+    scores = model.predict_scores(x_test)
 
-    assert len(predictions) == 2
-    assert [x[0] for x in predictions] == expected_classes
-    for cls, score in predictions:
-        assert isinstance(cls, bool)
-        assert isinstance(score, float)
+    assert scores.shape == torch.Size([2, 2])
+
+    assert torch.equal(classes, expected_classes)
 
 
 def test_prediction_order():
     """Check if the order of predictions is preserved."""
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(**params, device="cpu")
+    model = BertClassifierWithPooling(**params)
     x_train = ["carrot", "cucumber", "tomato", "potato"]
-    y_train = [True] * len(x_train)
+    y_train = [1] * len(x_train)
 
     x_test = ["pepper"] * 99 + ["chair"] * 1
 
     model.fit(x_train, y_train)
     predicted_scores = model.predict_scores(x_test)
 
-    expected_score_pepper = model.predict_scores(["pepper"])[0]
-    expected_score_chair = model.predict_scores(["chair"])[0]
+    expected_score_pepper = model.predict_scores(["pepper"])
+    expected_score_chair = model.predict_scores(["chair"])
 
-    # Test if only last prediction is different
-    # This will fail if the predictions are shuffled
-    for i in range(len(x_test) - 1):
-        assert predicted_scores[i] == expected_score_pepper
-    assert predicted_scores[-1] == expected_score_chair
+    expected_result_tensor = torch.cat([expected_score_pepper] * 99 + [expected_score_chair])
+
+    assert torch.equal(predicted_scores, expected_result_tensor)
 
 
 def test_save_and_load():
     params = MODEL_PARAMS
-    model = BertClassifierWithPooling(**params, device="cpu")
+    model = BertClassifierWithPooling(**params)
     path = Path("tmp_bert_model_test_dir")
 
     model.save(str(path))
