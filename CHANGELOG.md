@@ -1,6 +1,6 @@
 # Version History
 
-## 1.1.0 Feb 26, 2024
+## 1.1.0 Jun 19, 2024
 
 * Added multilabel classification.
 * Added regression.
